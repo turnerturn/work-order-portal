@@ -30,10 +30,10 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          REACT_APP_API_KEY: ${{ secrets.GOOGLE_DIRECTIONS_API_KEY }}
+          GOOGLE_DIRECTIONS_API_KEY: ${{ secrets.GOOGLE_DIRECTIONS_API_KEY }}
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build
+          folder: dist
           branch: gh-pages
