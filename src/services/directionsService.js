@@ -5,7 +5,7 @@ class DirectionsService {
     // 1. Store the API key securely (environment variables, backend proxy)
     // 2. Use a backend service to make the API calls to avoid exposing the key
     // 3. Implement proper error handling and retry logic
-    this.apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'AIzaSyCNfGXOkxVH4r5BNy56FF3LtVfIlLf1aUA';
+    this.apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'API_KEY';
     this.baseUrl = 'https://maps.googleapis.com/maps/api/directions/json';
   }
 
