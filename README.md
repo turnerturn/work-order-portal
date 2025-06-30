@@ -68,3 +68,9 @@ This section has moved here: [https://vitejs.dev/guide/build.html](https://vitej
 ### Troubleshooting
 
 This section has moved here: [https://vitejs.dev/guide/troubleshooting.html](https://vitejs.dev/guide/troubleshooting.html)
+
+
+## TODO:
+- "Last Activity" component on the work card should only be visible via details view.
+- Add feature which uses "Schedule" button to assign a work order to a selected day of the week.
+- Add page which displays week at a glance to view scheduled work for each day this week.

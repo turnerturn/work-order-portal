@@ -1,20 +1,20 @@
 import {
-    Close as CloseIcon,
-    MyLocation as LocationIcon,
-    Route as RouteIcon
+  Close as CloseIcon,
+  MyLocation as LocationIcon,
+  Route as RouteIcon
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    TextField,
-    Typography
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  TextField,
+  Typography
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
@@ -34,7 +34,7 @@ const RouteOptimizationModal = ({
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!open) {
-      setOriginAddress('');
+      setOriginAddress('1432 E 50th St, Tulsa, OK 74105'); // Default address
       setError('');
       setIsValidating(false);
       setIsLoadingLocation(false);

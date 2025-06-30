@@ -18,23 +18,27 @@ import {
   IconButton,
   Typography
 } from '@mui/material';
+import { InfoIcon } from 'lucide-react';
 import PropTypes from 'prop-types';
 import {
   formatDate,
   formatRelativeTime,
   getScheduleDescription,
-  isOverdue
+  isOverdue,
+  isPending,
+  isScheduled
 } from '../utils/dateUtils';
 
 const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, onScheduleWork }) => {
   const isOrderOverdue = isOverdue(workOrder.schedule.nextDue);
+  const isOrderScheduled = isScheduled(workOrder.schedule.nextDue);
+  const isOrderPending = isPending(workOrder.schedule.nextDue);
   const lastActivity = workOrder.activity[0]; // Most recent activity first
 
   return (
     <Card
       sx={{
-        maxWidth: 600,
-        margin: 'auto',
+        width: '100%',
         mb: 3,
         boxShadow: 3,
         '&:hover': {
@@ -52,11 +56,32 @@ const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, onScheduleWo
           sx={{ borderRadius: 0 }}
         >
           <Typography variant="body2" fontWeight="medium">
-            This work order is overdue and requires immediate attention
+            Overdue
           </Typography>
         </Alert>
       )}
-
+      {isOrderScheduled && (
+        <Alert
+          severity="info"
+          icon={<InfoIcon />}
+          sx={{ borderRadius: 0 }}
+        >
+          <Typography variant="body2" fontWeight="medium">
+            Scheduled
+          </Typography>
+        </Alert>
+      )}
+      {isOrderPending && (
+        <Alert
+          severity="warning"
+          icon={<WarningIcon />}
+          sx={{ borderRadius: 0 }}
+        >
+          <Typography variant="body2" fontWeight="medium">
+            Pending Schedule
+          </Typography>
+        </Alert>
+      )}
       <CardContent sx={{ pb: 1 }}>
         {/* Header with Title and Settings */}
         <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
@@ -108,7 +133,7 @@ const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, onScheduleWo
             <Box
               sx={{
                 p: 2,
-                bgcolor: isOrderOverdue ? 'error.50' : 'grey.50',
+                bgcolor: isOrderOverdue ? 'error.50' : isOrderPending ? 'warning.50' : 'grey.50',
                 borderRadius: 1,
                 display: 'flex',
                 alignItems: 'flex-start',
@@ -116,7 +141,7 @@ const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, onScheduleWo
               }}
             >
               <AccessTimeIcon
-                color={isOrderOverdue ? 'error' : 'success'}
+                color={isOrderOverdue ? 'error' : isOrderPending ? 'warning' : 'success'}
                 sx={{ mt: 0.25, fontSize: 20 }}
               />
               <Box>
@@ -126,7 +151,7 @@ const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, onScheduleWo
                 <Typography
                   variant="body2"
                   fontWeight="bold"
-                  color={isOrderOverdue ? 'error.main' : 'text.primary'}
+                  color={isOrderOverdue ? 'error.main' : isOrderPending ? 'warning.main' : 'text.primary'}
                 >
                   Due {formatDate(workOrder.schedule.nextDue)}
                 </Typography>

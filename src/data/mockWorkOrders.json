@@ -150,5 +150,29 @@
       "dayOfWeek": "any",
       "restrictions": ["business_hours"]
     }
+  },
+  {
+    "uuid": "wo-007",
+    "name": "Pest Control",
+    "description": "Quarterly pest control treatment for entire facility",
+    "address": "3000 College Blvd, Overland Park, KS 66211",
+    "created-date": "2024-08-15T10:00:00Z",
+    "activity": [
+      {
+        "id": "act-008",
+        "type": "treatment",
+        "date": "2025-06-01T09:00:00Z",
+        "technician": "Emily White",
+        "notes": "Applied treatment in all areas, no issues reported",
+        "status": "completed"
+      }
+    ],
+    "schedule": {
+      "cron": "0 0 1 */3 *",
+      "frequency": "quarterly",
+      "nextDue": null,
+      "dayOfWeek": "first_monday",
+      "restrictions": ["business_hours"]
+    }
   }
 ]

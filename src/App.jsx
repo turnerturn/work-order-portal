@@ -1,7 +1,6 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import './App.css';
-import VersionInfo from './components/VersionInfo';
 import WorkOrderPortal from './components/WorkOrderPortal';
 
 
@@ -117,7 +116,6 @@ function App() {
       <CssBaseline />
       <div className="App">
         <WorkOrderPortal />
-        <VersionInfo showBuildDate />
       </div>
     </ThemeProvider>
   );

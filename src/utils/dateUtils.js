@@ -2,6 +2,9 @@ import { format, formatDistanceToNow, parseISO } from 'date-fns';
 
 export const formatDate = (dateString) => {
   try {
+    if (!dateString || dateString.trim() === '') {
+      return 'Pending';
+    }
     const date = parseISO(dateString);
     return format(date, 'MMM dd, yyyy');
   } catch {
@@ -20,6 +23,9 @@ export const formatDateTime = (dateString) => {
 
 export const formatRelativeTime = (dateString) => {
   try {
+    if (!dateString || dateString.trim() === '') {
+      return 'No due date set';
+    }
     const date = parseISO(dateString);
     return formatDistanceToNow(date, { addSuffix: true });
   } catch {
@@ -29,11 +35,26 @@ export const formatRelativeTime = (dateString) => {
 
 export const isOverdue = (dueDateString) => {
   try {
+    if (!dueDateString) return false; // Handle empty or undefined input
     const dueDate = parseISO(dueDateString);
     return dueDate < new Date();
   } catch {
     return false;
   }
+};
+
+export const isScheduled = (nextDueDateString) => {
+  try {
+    if (!nextDueDateString) return false; // Handle empty or undefined input
+    const nextDueDate = parseISO(nextDueDateString);
+    return nextDueDate > new Date();
+  } catch {
+    return false;
+  }
+};
+
+export const isPending = (nextDueDateString) => {
+  return !nextDueDateString || nextDueDateString.trim() === '';
 };
 
 export const getScheduleDescription = (schedule) => {
