@@ -1,16 +1,16 @@
 import {
-  Add as AddIcon,
-  Assignment as AssignmentIcon
+    Add as AddIcon,
+    Assignment as AssignmentIcon
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  Grid,
-  Paper,
-  Typography
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Container,
+    Grid,
+    Paper,
+    Typography
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useWorkOrders } from '../hooks/useWorkOrders';
@@ -236,7 +236,7 @@ const WorkOrderPortal = () => {
         ) : (
           <Grid container spacing={3}>
             {filteredAndSortedWorkOrders.map((workOrder) => (
-              <Grid item xs={12} lg={6} key={workOrder.uuid}>
+              <Grid item xs={12} key={workOrder.uuid}>
                 <WorkOrderCard
                   workOrder={workOrder}
                   onScheduleClick={handleScheduleClick}
