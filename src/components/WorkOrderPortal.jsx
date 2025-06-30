@@ -98,6 +98,7 @@ const WorkOrderPortal = () => {
     console.log('Schedule work for:', workOrder.name);
   };
 
+
   const toggleSort = (field) => {
     if (sortBy === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -130,7 +131,6 @@ const WorkOrderPortal = () => {
       </Box>
     );
   }
-const apiKey = process.env.GOOGLE_DIRECTIONS_API_KEY;
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* Navigation Bar */}
@@ -148,7 +148,7 @@ const apiKey = process.env.GOOGLE_DIRECTIONS_API_KEY;
           overdueCount={overdueCount}
           upcomingCount={upcomingCount}
         />
-        {apiKey}
+
         {/* Search and Filter */}
         <SearchAndFilter
           searchTerm={searchTerm}
