@@ -1,7 +1,9 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import './App.css';
+import VersionInfo from './components/VersionInfo';
 import WorkOrderPortal from './components/WorkOrderPortal';
+
 
 // Create a comprehensive Material-UI theme
 const theme = createTheme({
@@ -115,6 +117,7 @@ function App() {
       <CssBaseline />
       <div className="App">
         <WorkOrderPortal />
+        <VersionInfo showBuildDate />
       </div>
     </ThemeProvider>
   );

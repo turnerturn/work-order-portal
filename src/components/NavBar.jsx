@@ -16,6 +16,7 @@ import {
     useTheme
 } from '@mui/material';
 import PropTypes from 'prop-types';
+import VersionInfo from './VersionInfo';
 
 const NavBar = ({ onAddNewOrder, onRefresh, loading = false }) => {
   const theme = useTheme();
@@ -56,6 +57,7 @@ const NavBar = ({ onAddNewOrder, onRefresh, loading = false }) => {
           >
             Work Order Portal
           </Typography>
+          <VersionInfo variant="caption" />
         </Box>
 
         {/* Right side - Actions */}
