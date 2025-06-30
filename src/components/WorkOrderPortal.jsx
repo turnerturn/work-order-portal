@@ -1,16 +1,16 @@
 import {
-    Add as AddIcon,
-    Assignment as AssignmentIcon
+  Add as AddIcon,
+  Assignment as AssignmentIcon
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    CircularProgress,
-    Container,
-    Grid,
-    Paper,
-    Typography
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Grid,
+  Paper,
+  Typography
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useWorkOrders } from '../hooks/useWorkOrders';
@@ -130,7 +130,7 @@ const WorkOrderPortal = () => {
       </Box>
     );
   }
-
+const apiKey = process.env.GOOGLE_DIRECTIONS_API_KEY;
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* Navigation Bar */}
@@ -148,7 +148,7 @@ const WorkOrderPortal = () => {
           overdueCount={overdueCount}
           upcomingCount={upcomingCount}
         />
-
+        {apiKey}
         {/* Search and Filter */}
         <SearchAndFilter
           searchTerm={searchTerm}
