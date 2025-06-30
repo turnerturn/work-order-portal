@@ -1,31 +1,33 @@
+/* Modern App Styles */
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+/* Focus styles for better accessibility */
+*:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
-.heart {
-  color: #ff0000;
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
-.small {
-  font-size: 0.75rem;
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
