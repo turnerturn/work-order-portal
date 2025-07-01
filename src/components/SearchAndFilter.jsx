@@ -1,24 +1,23 @@
 import {
-    FilterList as FilterIcon,
-    Route as RouteIcon,
-    Search as SearchIcon,
-    KeyboardArrowUp as SortAscIcon,
-    KeyboardArrowDown as SortDescIcon,
-    Sort as SortIcon
+  FilterList as FilterIcon,
+  Search as SearchIcon,
+  KeyboardArrowUp as SortAscIcon,
+  KeyboardArrowDown as SortDescIcon,
+  Sort as SortIcon
 } from '@mui/icons-material';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    FormControl,
-    Grid,
-    InputAdornment,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  FormControl,
+  Grid,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
@@ -30,9 +29,7 @@ const SearchAndFilter = ({
   sortBy,
   sortOrder,
   onSortChange,
-  resultCount,
-  onOptimizeRoute,
-  thisWeekWorkOrdersCount
+  resultCount
 }) => {
   const handleSortToggle = (field) => {
     onSortChange(field);
@@ -52,7 +49,7 @@ const SearchAndFilter = ({
       <CardContent sx={{ p: 3 }}>
         <Grid container spacing={3} alignItems="center">
           {/* Search Field */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={8}>
             <TextField
               fullWidth
               variant="outlined"
@@ -77,27 +74,8 @@ const SearchAndFilter = ({
           </Grid>
 
           {/* Filter and Sort Controls */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
-              {/* Route Optimization Button */}
-              <Button
-                variant="contained"
-                size="small"
-                onClick={onOptimizeRoute}
-                startIcon={<RouteIcon />}
-                disabled={thisWeekWorkOrdersCount === 0}
-                sx={{
-                  textTransform: 'none',
-                  borderRadius: 2,
-                  bgcolor: 'success.main',
-                  '&:hover': {
-                    bgcolor: 'success.dark'
-                  }
-                }}
-              >
-                Optimize Route ({thisWeekWorkOrdersCount})
-              </Button>
-
               {/* Status Filter */}
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>Status</InputLabel>
@@ -110,39 +88,25 @@ const SearchAndFilter = ({
                 >
                   <MenuItem value="all">All Status</MenuItem>
                   <MenuItem value="overdue">Overdue</MenuItem>
-                  <MenuItem value="upcoming">Upcoming</MenuItem>
+                  <MenuItem value="scheduled">Scheduled</MenuItem>
+                  <MenuItem value="pending">Pending</MenuItem>
                 </Select>
               </FormControl>
 
-              {/* Sort Buttons */}
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button
-                  variant={getSortButtonVariant('nextDue')}
-                  size="small"
-                  onClick={() => handleSortToggle('nextDue')}
-                  startIcon={getSortIcon('nextDue')}
-                  sx={{
-                    textTransform: 'none',
-                    borderRadius: 2,
-                    px: 2
-                  }}
-                >
-                  Due Date
-                </Button>
-                <Button
-                  variant={getSortButtonVariant('name')}
-                  size="small"
-                  onClick={() => handleSortToggle('name')}
-                  startIcon={getSortIcon('name')}
-                  sx={{
-                    textTransform: 'none',
-                    borderRadius: 2,
-                    px: 2
-                  }}
-                >
-                  Name
-                </Button>
-              </Box>
+              {/* Sort Button */}
+              <Button
+                variant={getSortButtonVariant('nextDue')}
+                size="small"
+                onClick={() => handleSortToggle('nextDue')}
+                startIcon={getSortIcon('nextDue')}
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  px: 2
+                }}
+              >
+                Due Date
+              </Button>
             </Box>
           </Grid>
 
@@ -171,9 +135,7 @@ SearchAndFilter.propTypes = {
   sortBy: PropTypes.string.isRequired,
   sortOrder: PropTypes.string.isRequired,
   onSortChange: PropTypes.func.isRequired,
-  resultCount: PropTypes.number.isRequired,
-  onOptimizeRoute: PropTypes.func.isRequired,
-  thisWeekWorkOrdersCount: PropTypes.number.isRequired
+  resultCount: PropTypes.number.isRequired
 };
 
 export default SearchAndFilter;

@@ -1,6 +1,5 @@
 import {
   AccessTime as AccessTimeIcon,
-  CheckCircle as CheckCircleIcon,
   LocationOn as LocationIcon,
   Settings as SettingsIcon,
   Warning as WarningIcon
@@ -12,8 +11,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  Chip,
-  Divider,
   Grid,
   IconButton,
   Typography
@@ -29,11 +26,10 @@ import {
   isScheduled
 } from '../utils/dateUtils';
 
-const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, onScheduleWork }) => {
+const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, compact = false }) => {
   const isOrderOverdue = isOverdue(workOrder.schedule.nextDue);
   const isOrderScheduled = isScheduled(workOrder.schedule.nextDue);
   const isOrderPending = isPending(workOrder.schedule.nextDue);
-  const lastActivity = workOrder.activity[0]; // Most recent activity first
 
   return (
     <Card
@@ -130,92 +126,72 @@ const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, onScheduleWo
 
           {/* Schedule & Due Date */}
           <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                p: 2,
-                bgcolor: isOrderOverdue ? 'error.50' : isOrderPending ? 'warning.50' : 'grey.50',
-                borderRadius: 1,
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 1
-              }}
-            >
-              <AccessTimeIcon
-                color={isOrderOverdue ? 'error' : isOrderPending ? 'warning' : 'success'}
-                sx={{ mt: 0.25, fontSize: 20 }}
-              />
-              <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
-                  {getScheduleDescription(workOrder.schedule)} Schedule
-                </Typography>
-                <Typography
-                  variant="body2"
-                  fontWeight="bold"
-                  color={isOrderOverdue ? 'error.main' : isOrderPending ? 'warning.main' : 'text.primary'}
+            {(() => {
+              let bgColor, iconColor, textColor;
+
+              if (isOrderOverdue) {
+                bgColor = 'error.50';
+                iconColor = 'error';
+                textColor = 'error.main';
+              } else if (isOrderPending) {
+                bgColor = 'warning.50';
+                iconColor = 'warning';
+                textColor = 'warning.main';
+              } else {
+                bgColor = 'grey.50';
+                iconColor = 'success';
+                textColor = 'text.primary';
+              }
+
+              return (
+                <Box
+                  sx={{
+                    p: 2,
+                    bgcolor: bgColor,
+                    borderRadius: 1,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 1
+                  }}
                 >
-                  Due {formatDate(workOrder.schedule.nextDue)}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {formatRelativeTime(workOrder.schedule.nextDue)}
-                </Typography>
-              </Box>
-            </Box>
+                  <AccessTimeIcon
+                    color={iconColor}
+                    sx={{ mt: 0.25, fontSize: 20 }}
+                  />
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
+                      {getScheduleDescription(workOrder.schedule)} Schedule
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold"
+                      color={textColor}
+                    >
+                      Due {formatDate(workOrder.schedule.nextDue)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {formatRelativeTime(workOrder.schedule.nextDue)}
+                    </Typography>
+                  </Box>
+                </Box>
+              );
+            })()}
           </Grid>
         </Grid>
-
-        {/* Last Activity Section */}
-        {lastActivity && (
-          <>
-            <Divider sx={{ my: 2 }} />
-            <Box>
-              <Box display="flex" alignItems="center" gap={1} mb={1}>
-                <CheckCircleIcon color="success" sx={{ fontSize: 16 }} />
-                <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
-                  Last Activity
-                </Typography>
-              </Box>
-              <Box sx={{ ml: 3 }}>
-                <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-                  <Chip
-                    label={lastActivity.type.charAt(0).toUpperCase() + lastActivity.type.slice(1)}
-                    color="success"
-                    size="small"
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    by {lastActivity.technician}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {formatDate(lastActivity.date)}
-                  </Typography>
-                </Box>
-                {lastActivity.notes && (
-                  <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>
-                    "{lastActivity.notes}"
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-          </>
-        )}
       </CardContent>
 
       {/* Action Buttons */}
-      <CardActions sx={{ px: 2, pb: 2 }}>
-        <Button
-          variant="outlined"
-          onClick={() => onViewDetails(workOrder)}
-          sx={{ flex: 1 }}
-        >
-          View Details
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => onScheduleWork(workOrder)}
-          sx={{ flex: 1 }}
-        >
-          Schedule Work
-        </Button>
-      </CardActions>
+      {!compact && (
+        <CardActions sx={{ px: 2, pb: 2 }}>
+          <Button
+            variant="contained"
+            onClick={() => onViewDetails(workOrder)}
+            sx={{ flex: 1 }}
+          >
+            Details
+          </Button>
+        </CardActions>
+      )}
     </Card>
   );
 };
@@ -245,7 +221,7 @@ WorkOrderCard.propTypes = {
   }).isRequired,
   onScheduleClick: PropTypes.func.isRequired,
   onViewDetails: PropTypes.func.isRequired,
-  onScheduleWork: PropTypes.func.isRequired
+  compact: PropTypes.bool
 };
 
 export default WorkOrderCard;

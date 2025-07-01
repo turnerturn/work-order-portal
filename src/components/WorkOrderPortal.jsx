@@ -1,24 +1,26 @@
 import {
-  Add as AddIcon,
-  Assignment as AssignmentIcon
+    Add as AddIcon,
+    Assignment as AssignmentIcon
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  Grid,
-  Paper,
-  Typography
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Container,
+    Grid,
+    Paper,
+    Typography
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useWorkOrders } from '../hooks/useWorkOrders';
 import { isOverdue } from '../utils/dateUtils';
 import DashboardStats from './DashboardStats';
+import ItineraryModal from './ItineraryModal';
 import NavBar from './NavBar';
 import SearchAndFilter from './SearchAndFilter';
 import WorkOrderCard from './WorkOrderCard';
+import WorkOrderDetailsModal from './WorkOrderDetailsModal';
 
 const WorkOrderPortal = () => {
   const { workOrders, loading, error, refreshWorkOrders } = useWorkOrders();
@@ -26,6 +28,11 @@ const WorkOrderPortal = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortBy, setSortBy] = useState('nextDue');
   const [sortOrder, setSortOrder] = useState('asc');
+
+  // Modal states
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [itineraryModalOpen, setItineraryModalOpen] = useState(false);
+  const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
 
   // Filter and sort work orders
   const filteredAndSortedWorkOrders = React.useMemo(() => {
@@ -86,16 +93,30 @@ const WorkOrderPortal = () => {
     console.log('Add new work order');
   };
 
+  const handleCreateItinerary = () => {
+    setItineraryModalOpen(true);
+  };
+
   const handleScheduleClick = (workOrder) => {
     console.log('Schedule clicked for:', workOrder.name);
   };
 
   const handleViewDetails = (workOrder) => {
-    console.log('View details for:', workOrder.name);
+    setSelectedWorkOrder(workOrder);
+    setDetailsModalOpen(true);
   };
 
-  const handleScheduleWork = (workOrder) => {
-    console.log('Schedule work for:', workOrder.name);
+  const handleSaveWorkOrder = (updatedWorkOrder) => {
+    console.log('Save work order:', updatedWorkOrder);
+    // Here you would typically update the work order in your backend
+    setDetailsModalOpen(false);
+    setSelectedWorkOrder(null);
+  };
+
+  const handleCreateItineraryFromModal = (selectedWorkOrders, originAddress, date) => {
+    console.log('Create itinerary:', { selectedWorkOrders, originAddress, date });
+    // Here you would handle the itinerary creation
+    setItineraryModalOpen(false);
   };
 
 
@@ -136,6 +157,7 @@ const WorkOrderPortal = () => {
       {/* Navigation Bar */}
       <NavBar
         onAddNewOrder={handleAddNewOrder}
+        onCreateItinerary={handleCreateItinerary}
         onRefresh={refreshWorkOrders}
         loading={loading}
       />
@@ -159,8 +181,6 @@ const WorkOrderPortal = () => {
           sortOrder={sortOrder}
           onSortChange={toggleSort}
           resultCount={filteredAndSortedWorkOrders.length}
-          onOptimizeRoute={() => {}}
-          thisWeekWorkOrdersCount={0}
         />
 
         {/* Error Message */}
@@ -241,13 +261,31 @@ const WorkOrderPortal = () => {
                   workOrder={workOrder}
                   onScheduleClick={handleScheduleClick}
                   onViewDetails={handleViewDetails}
-                  onScheduleWork={handleScheduleWork}
                 />
               </Grid>
             ))}
           </Grid>
         )}
       </Container>
+
+      {/* Work Order Details Modal */}
+      <WorkOrderDetailsModal
+        open={detailsModalOpen}
+        onClose={() => {
+          setDetailsModalOpen(false);
+          setSelectedWorkOrder(null);
+        }}
+        workOrder={selectedWorkOrder}
+        onSave={handleSaveWorkOrder}
+      />
+
+      {/* Itinerary Modal */}
+      <ItineraryModal
+        open={itineraryModalOpen}
+        onClose={() => setItineraryModalOpen(false)}
+        workOrders={workOrders}
+        onCreateItinerary={handleCreateItineraryFromModal}
+      />
     </Box>
   );
 };
