@@ -71,11 +71,23 @@ This section has moved here: [https://vitejs.dev/guide/troubleshooting.html](htt
 
 
 ## TODO:
-- Revise the view details modal.  Currently not populating the inputs when you render the details view of a card.
-
-- add footer to each work order card.  I want this to be wrapped with a thin visual boundary where "Activity" is embedded in-line of the thin boundary. I want a "Schedule" button alligned right on this footer.  When clicked, I want to open modal which has user pick a date for its schedule.  This will then append a new item to the work order json for an array of scheduled activity.  nextDueDate will now be determined from the next date which is nearest current date.  Each of these scheduled items will have a button to indicate when the work was completed.  After completion, we will convert this item to the activity list.  On the details view of the work order, we will need the ability to see the list group of scheduled items and activity.  I should be able to swipe left on both these list group items to delete a record.  I should also have a notes icon on both the scheduled items and the activity items.  Where i can attach notes to the given item.  When scheduled item is converted to activity then these notes will also transfer.
-
-- Revise dashboard stats to include counts "New" (i.e.. no activity), "Upcoming", "This Week" , "Overdue".  When either of these dashboard stats are clicked, we will filter the work order cards by those which match this criteria.  Remove the Status selection filter now that we can filter by clicking these stats in the dashboard.
-
 - List acitivity items similar to the Shelly cloud interface of activity.
+- Move dashboard stats to buttons on the sort and filter.  No dashboard, just the different colors of buttons with text identifier of button make most efficient use of the space and when clicked, the color fills the button. When toggled off, button is filled a different off color.  And u still want the totals as a badge notification aligned right snug in the corner of the button.
+
+I want a filter icon button aligned right on the search and filter.  When clicked , it gives me modal of additional filters such as search by text, schedule cadence, activity date includes date range.  I no longer want the search text on the main search and filter component, it’s only on the modal.  When additional filters are applied , I want the filter icon to have badge notification of filter count.  SearchAndFilter bar should also have a reset button to clear all filters.
+
+Optimize Route button should also be a button which is toggled on/off.  It’s filled green when toggled on.
+
+When I click schedule and then pick date on the schedule modal: I want to return back to the portal.  Currently it returns to the details modal.  When scheduled, I simply want to add a new line item to my detail’s activity list. Set status accordingly. Text will be “work scheduled”.
+
+Activity list items should be concise mobile friendly table with expandable rows when we have notes.  Summary of each row will be date, description, status.  Where status is complete, incomplete, canceled. When the “…” is clicked, we can update status and add notes and edit description.  
+
+NextDue will be determined from the activity where incomplete and scheduled date is >= now and scheduled date is <= all other scheduled activity for this work item.
+
+Work order card should also have a section of visual indicator tell user the next suggested date to schedule work for an item based on its cadence.   
+
+Remove the days of the week selection from the cadence details on work order detail.
+
+All individual labels/inputs should be on individual rows when dealing with modals.
+
 
