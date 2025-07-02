@@ -13,42 +13,44 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useWorkOrders } from '../hooks/useWorkOrders';
-import directionsService from '../services/directionsService';
 import { isNewWorkOrder, isOverdue, isThisWeek, isUpcoming } from '../utils/dateUtils';
-import DashboardStats from './DashboardStats';
 import NavBar from './NavBar';
-import OptimizeRouteModal from './OptimizeRouteModal';
 import SearchAndFilter from './SearchAndFilter';
 import WorkOrderCard from './WorkOrderCard';
 import WorkOrderDetailsModal from './WorkOrderDetailsModal';
 
 const WorkOrderPortal = () => {
   const { workOrders, loading, error, refreshWorkOrders } = useWorkOrders();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [dashboardFilter, setDashboardFilter] = useState(null); // New filter from dashboard clicks
-  const [sortBy, setSortBy] = useState('nextDue');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [activeFilter, setActiveFilter] = useState(null);
+  const [advancedFilters, setAdvancedFilters] = useState({
+    searchText: '',
+    cadence: 'all',
+    activityDateFrom: null,
+    activityDateTo: null,
+    status: 'all'
+  });
+  const [routeOptimized, setRouteOptimized] = useState(false);
 
   // Modal states
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
-  const [optimizeModalOpen, setOptimizeModalOpen] = useState(false);
   const [optimizedOrder, setOptimizedOrder] = useState(null);
 
   // Filter and sort work orders
   const filteredAndSortedWorkOrders = React.useMemo(() => {
     let filtered = workOrders.filter(wo => {
-      const matchesSearch = wo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          wo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          wo.address.toLowerCase().includes(searchTerm.toLowerCase());
+      // Apply text search from advanced filters
+      if (advancedFilters.searchText) {
+        const searchTerm = advancedFilters.searchText.toLowerCase();
+        const matchesSearch = wo.name.toLowerCase().includes(searchTerm) ||
+                            wo.description.toLowerCase().includes(searchTerm) ||
+                            wo.address.toLowerCase().includes(searchTerm);
+        if (!matchesSearch) return false;
+      }
 
-      if (!matchesSearch) return false;
-
-      // Apply dashboard filter if set
-      if (dashboardFilter) {
-        switch (dashboardFilter) {
-          case 'all':
-            return true; // Show all work orders
+      // Apply dashboard filter
+      if (activeFilter) {
+        switch (activeFilter) {
           case 'new':
             return isNewWorkOrder(wo['created-date']);
           case 'upcoming':
@@ -58,47 +60,20 @@ const WorkOrderPortal = () => {
           case 'overdue':
             return isOverdue(wo.schedule.nextDue);
           default:
-            return true;
+            break;
         }
+      }
+
+      // Apply advanced filters
+      if (advancedFilters.cadence && advancedFilters.cadence !== 'all') {
+        if (wo.schedule.frequency !== advancedFilters.cadence) return false;
       }
 
       return true;
     });
 
-    // Sort the filtered results
-    filtered.sort((a, b) => {
-      let aValue, bValue;
-
-      switch (sortBy) {
-        case 'name':
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-          break;
-        case 'nextDue':
-          aValue = new Date(a.schedule.nextDue);
-          bValue = new Date(b.schedule.nextDue);
-          break;
-        case 'created':
-          aValue = new Date(a['created-date']);
-          bValue = new Date(b['created-date']);
-          break;
-        default:
-          return 0;
-      }
-
-      if (sortOrder === 'asc') {
-        if (aValue < bValue) return -1;
-        if (aValue > bValue) return 1;
-        return 0;
-      } else {
-        if (aValue > bValue) return -1;
-        if (aValue < bValue) return 1;
-        return 0;
-      }
-    });
-
     return filtered;
-  }, [workOrders, searchTerm, dashboardFilter, sortBy, sortOrder]);
+  }, [workOrders, activeFilter, advancedFilters]);
 
   // Calculate dashboard stats
   const newCount = workOrders.filter(wo => isNewWorkOrder(wo['created-date'])).length;
@@ -108,6 +83,20 @@ const WorkOrderPortal = () => {
 
   const handleAddNewOrder = () => {
     console.log('Add new work order');
+  };
+
+  const handleFilterChange = (filterType) => {
+    setActiveFilter(filterType);
+    if (filterType) {
+      setRouteOptimized(false); // Reset route optimization when changing filters
+      setOptimizedOrder(null);
+    }
+  };
+
+  const handleAdvancedFiltersChange = (filters) => {
+    setAdvancedFilters(filters);
+    setRouteOptimized(false); // Reset route optimization when changing filters
+    setOptimizedOrder(null);
   };
 
   const handleViewDetails = (workOrder) => {
@@ -127,34 +116,19 @@ const WorkOrderPortal = () => {
     setSelectedWorkOrder(null);
   };
 
-  const toggleSort = (field) => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortOrder('asc');
-    }
-  };
-
-  const handleOptimizeRoute = () => setOptimizeModalOpen(true);
-
-  const handleDashboardStatClick = (filterType) => {
-    setDashboardFilter(dashboardFilter === filterType ? null : filterType);
-  };
-
-  const handleOptimizeSubmit = async (origin) => {
-    setOptimizeModalOpen(false);
-    // Call directionsService.optimizeRoute
-    try {
-      const destinations = filteredAndSortedWorkOrders.map(wo => wo.address);
-      const result = await directionsService.optimizeRoute(origin, destinations);
-      if (result.status === 'OK' && result.routes[0]) {
-        setOptimizedOrder(result.routes[0].waypoint_order);
-      }
-    } catch (error) {
-      // Handle error by logging and resetting optimized order
-      console.error('Failed to optimize route:', error);
+  const handleOptimizeRoute = () => {
+    if (routeOptimized) {
+      // Turn off optimization
+      setRouteOptimized(false);
       setOptimizedOrder(null);
+    } else {
+      // Turn on optimization - for now, just toggle state
+      // In a real implementation, you might show the origin selection modal
+      setRouteOptimized(true);
+      // Simple mock optimization
+      const indices = filteredAndSortedWorkOrders.map((_, index) => index);
+      const shuffled = [...indices].sort(() => Math.random() - 0.5);
+      setOptimizedOrder(shuffled);
     }
   };
 
@@ -192,25 +166,19 @@ const WorkOrderPortal = () => {
 
       {/* Main Content */}
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        {/* Dashboard Stats */}
-        <DashboardStats
-          totalCount={workOrders.length}
+        {/* Search and Filter */}
+        <SearchAndFilter
+          activeFilter={activeFilter}
+          onFilterChange={handleFilterChange}
           newCount={newCount}
           upcomingCount={upcomingCount}
           thisWeekCount={thisWeekCount}
           overdueCount={overdueCount}
-          onStatClick={handleDashboardStatClick}
-        />
-
-        {/* Search and Filter */}
-        <SearchAndFilter
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          onSortChange={toggleSort}
-          resultCount={filteredAndSortedWorkOrders.length}
+          routeOptimized={routeOptimized}
           onOptimizeRoute={handleOptimizeRoute}
+          advancedFilters={advancedFilters}
+          onAdvancedFiltersChange={handleAdvancedFiltersChange}
+          resultCount={filteredAndSortedWorkOrders.length}
         />
 
         {/* Error Message */}
@@ -292,12 +260,6 @@ const WorkOrderPortal = () => {
         onSave={handleSaveWorkOrder}
       />
 
-      {/* Optimize Route Modal */}
-      <OptimizeRouteModal
-        open={optimizeModalOpen}
-        onClose={() => setOptimizeModalOpen(false)}
-        onSubmit={handleOptimizeSubmit}
-      />
     </Box>
   );
 };

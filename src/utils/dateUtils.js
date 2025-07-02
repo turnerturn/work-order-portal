@@ -121,10 +121,91 @@ export const isUpcoming = (dueDateString) => {
     if (!dueDateString) return false;
     const dueDate = parseISO(dueDateString);
     const now = new Date();
-    const thirtyDaysFromNow = new Date();
-    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-    return dueDate > now && dueDate <= thirtyDaysFromNow;
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
+    return dueDate > now && dueDate <= endOfMonth;
   } catch {
     return false;
+  }
+};
+
+// Calculate suggested next schedule date based on cadence and last activity
+export const getSuggestedNextScheduleDate = (workOrder) => {
+  try {
+    if (!workOrder.activity || workOrder.activity.length === 0 || !workOrder.schedule.frequency) {
+      return 'No activity history';
+    }
+
+    // Find the most recent completed activity before now
+    const now = new Date();
+    const completedActivities = workOrder.activity
+      .filter(activity => activity.status === 'completed')
+      .map(activity => ({
+        ...activity,
+        date: parseISO(activity.date)
+      }))
+      .filter(activity => activity.date <= now)
+      .sort((a, b) => b.date - a.date);
+
+    if (completedActivities.length === 0) {
+      return 'No completed activities';
+    }
+
+    const lastActivity = completedActivities[0];
+    const lastActivityDate = lastActivity.date;
+    let suggestedDate = new Date(lastActivityDate);
+
+    // Add time based on frequency
+    switch (workOrder.schedule.frequency) {
+      case 'daily':
+        suggestedDate.setDate(suggestedDate.getDate() + 1);
+        break;
+      case 'weekly':
+        suggestedDate.setDate(suggestedDate.getDate() + 7);
+        break;
+      case 'monthly':
+        suggestedDate.setMonth(suggestedDate.getMonth() + 1);
+        break;
+      case 'quarterly':
+        suggestedDate.setMonth(suggestedDate.getMonth() + 3);
+        break;
+      case 'annually':
+        suggestedDate.setFullYear(suggestedDate.getFullYear() + 1);
+        break;
+      default:
+        return 'Unknown frequency';
+    }
+
+    // If suggested date is in the past, keep adding intervals until we get a future date
+    let attempts = 0;
+    const maxAttempts = 10; // Prevent infinite loops
+    const currentTime = now.getTime(); // Get timestamp for comparison
+
+    while (suggestedDate.getTime() <= currentTime && attempts < maxAttempts) {
+      attempts++;
+      switch (workOrder.schedule.frequency) {
+        case 'daily':
+          suggestedDate.setDate(suggestedDate.getDate() + 1);
+          break;
+        case 'weekly':
+          suggestedDate.setDate(suggestedDate.getDate() + 7);
+          break;
+        case 'monthly':
+          suggestedDate.setMonth(suggestedDate.getMonth() + 1);
+          break;
+        case 'quarterly':
+          suggestedDate.setMonth(suggestedDate.getMonth() + 3);
+          break;
+        case 'annually':
+          suggestedDate.setFullYear(suggestedDate.getFullYear() + 1);
+          break;
+        default:
+          return 'Unknown frequency';
+      }
+    }
+
+    return formatDate(suggestedDate.toISOString());
+  } catch {
+    return 'Unable to calculate';
   }
 };

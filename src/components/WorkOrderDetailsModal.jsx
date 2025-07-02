@@ -1,34 +1,29 @@
 import {
-  Close as CloseIcon,
-  ExpandMore as ExpandMoreIcon,
-  History as HistoryIcon,
-  MoreHoriz as MoreIcon,
-  Save as SaveIcon
+    Close as CloseIcon,
+    ExpandMore as ExpandMoreIcon,
+    History as HistoryIcon,
+    Save as SaveIcon
 } from '@mui/icons-material';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  MenuItem,
-  Select,
-  TextField,
-  Typography
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Alert,
+    Box,
+    Button,
+    Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    Grid,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
@@ -134,10 +129,12 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          p: 1
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 3,
+            p: 1
+          }
         }
       }}
     >
@@ -249,8 +246,10 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
                   value={formData.nextDue ? new Date(formData.nextDue).toISOString().slice(0, 16) : ''}
                   onChange={(e) => handleInputChange('nextDue', e.target.value ? new Date(e.target.value).toISOString() : '')}
                   disabled={!isEditing}
-                  InputLabelProps={{
-                    shrink: true,
+                  slotProps={{
+                    inputLabel: {
+                      shrink: true,
+                    }
                   }}
                 />
               </Grid>
@@ -292,51 +291,69 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
                   </Typography>
                 </Box>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails sx={{ px: 0 }}>
                 {workOrder.activity && workOrder.activity.length > 0 ? (
-                  <List>
+                  <Box sx={{ width: '100%' }}>
                     {workOrder.activity.map((activity, index) => (
-                      <ListItem key={activity.id || index} divider={index < workOrder.activity.length - 1}>
-                        <ListItemText
-                          primary={
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                                {activity.type?.charAt(0).toUpperCase() + activity.type?.slice(1) || 'Activity'}
-                              </Typography>
-                              <Chip
-                                label={activity.status || 'Unknown'}
-                                size="small"
-                                color={activity.status === 'completed' ? 'success' : 'default'}
-                              />
-                            </Box>
+                      <Box
+                        key={activity.id || index}
+                        onClick={() => handleActivityEdit(activity)}
+                        sx={{
+                          width: '100%',
+                          p: 3,
+                          borderBottom: index < workOrder.activity.length - 1 ? '1px solid' : 'none',
+                          borderColor: 'divider',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            bgcolor: 'action.hover',
+                            transform: 'translateX(4px)'
                           }
-                          secondary={
-                            <Box sx={{ mt: 1 }}>
-                              <Typography variant="body2" color="text.secondary">
-                                {formatDate(activity.date)} • {activity.technician || 'Unknown technician'}
-                              </Typography>
-                              {activity.notes && (
-                                <Typography variant="body2" sx={{ mt: 0.5 }}>
-                                  {activity.notes}
-                                </Typography>
-                              )}
-                            </Box>
-                          }
-                        />
-                        <ListItemSecondaryAction>
-                          <IconButton
-                            edge="end"
-                            onClick={() => handleActivityEdit(activity)}
+                        }}
+                      >
+                        {/* Activity Row Header */}
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                            {formatDate(activity.date)}
+                          </Typography>
+                          <Chip
+                            label={
+                              activity.status === 'complete' ? 'Complete' :
+                              activity.status === 'canceled' ? 'Canceled' : 'Incomplete'
+                            }
                             size="small"
-                          >
-                            <MoreIcon />
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
+                            color={
+                              activity.status === 'complete' ? 'success' :
+                              activity.status === 'canceled' ? 'error' : 'warning'
+                            }
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </Box>
+
+                        {/* Activity Description */}
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            mb: 1,
+                            color: 'text.primary',
+                            fontWeight: 500
+                          }}
+                        >
+                          {activity.description || activity.type?.charAt(0).toUpperCase() + activity.type?.slice(1) || 'Activity'}
+                        </Typography>
+
+                        {/* Activity Meta Info */}
+                        <Typography variant="body2" color="text.secondary">
+                          {activity.technician ? `Technician: ${activity.technician}` : 'No technician assigned'}
+                          {activity.reminders && activity.reminders.length > 0 && (
+                            <> • {activity.reminders.length} reminder{activity.reminders.length !== 1 ? 's' : ''}</>
+                          )}
+                        </Typography>
+                      </Box>
                     ))}
-                  </List>
+                  </Box>
                 ) : (
-                  <Alert severity="info" sx={{ borderRadius: 2 }}>
+                  <Alert severity="info" sx={{ borderRadius: 2, mx: 3 }}>
                     No activity available for this work order.
                   </Alert>
                 )}

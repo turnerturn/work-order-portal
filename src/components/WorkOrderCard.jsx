@@ -16,9 +16,8 @@ import { InfoIcon } from 'lucide-react';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-  formatDate,
-  formatRelativeTime,
   getScheduleDescription,
+  getSuggestedNextScheduleDate,
   isOverdue,
   isPending,
   isScheduled
@@ -165,17 +164,10 @@ const WorkOrderCard = ({ workOrder, onViewDetails, onSchedule, compact = false }
                   />
                   <Box>
                     <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
-                      {getScheduleDescription(workOrder.schedule)} Schedule
+                      {getScheduleDescription(workOrder.schedule)}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      fontWeight="bold"
-                      color={textColor}
-                    >
-                      Due {formatDate(workOrder.schedule.nextDue)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {formatRelativeTime(workOrder.schedule.nextDue)}
+                    <Typography variant="caption" display="block" color="text.secondary" sx={{ fontSize: '0.65rem', mb: 0.5 }}>
+                      Suggested: {getSuggestedNextScheduleDate(workOrder)}
                     </Typography>
                   </Box>
                 </Box>

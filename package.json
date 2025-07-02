@@ -1,6 +1,6 @@
 {
   "name": "codespaces-react",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "homepage": "https://turnerturn.github.io/work-order-portal",
   "private": false,
   "dependencies": {
@@ -8,6 +8,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.2",
+    "@mui/x-date-pickers": "^8.6.0",
     "@tanstack/react-query": "^5.81.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

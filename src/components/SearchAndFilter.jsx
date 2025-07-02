@@ -1,127 +1,185 @@
 import {
-    Search as SearchIcon,
-    KeyboardArrowUp as SortAscIcon,
-    KeyboardArrowDown as SortDescIcon,
-    Sort as SortIcon
+  Clear as ClearIcon,
+  FilterList as FilterIcon,
+  Route as RouteIcon
 } from '@mui/icons-material';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    Grid,
-    InputAdornment,
-    TextField
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardContent
 } from '@mui/material';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import AdvancedFilterModal from './AdvancedFilterModal';
+import FilterButtons from './FilterButtons';
 
 const SearchAndFilter = ({
-  searchTerm,
-  onSearchChange,
-  sortBy,
-  sortOrder,
-  onSortChange,
-  resultCount,
-  onOptimizeRoute
+  // Dashboard filter props
+  activeFilter,
+  onFilterChange,
+  newCount,
+  upcomingCount,
+  thisWeekCount,
+  overdueCount,
+  // Route optimization props
+  routeOptimized,
+  onOptimizeRoute,
+  // Advanced filter props
+  advancedFilters,
+  onAdvancedFiltersChange,
+  // Results
+  resultCount
 }) => {
-  const handleSortToggle = (field) => {
-    onSortChange(field);
+  const [advancedFilterOpen, setAdvancedFilterOpen] = useState(false);
+
+  const getActiveFilterCount = () => {
+    if (!advancedFilters) return 0;
+    let count = 0;
+    if (advancedFilters.searchText) count++;
+    if (advancedFilters.cadence && advancedFilters.cadence !== 'all') count++;
+    if (advancedFilters.activityDateFrom || advancedFilters.activityDateTo) count++;
+    if (advancedFilters.status && advancedFilters.status !== 'all') count++;
+    return count;
   };
 
-  const getSortIcon = (field) => {
-    if (sortBy !== field) return <SortIcon />;
-    return sortOrder === 'asc' ? <SortAscIcon /> : <SortDescIcon />;
+  const handleAdvancedFiltersApply = (filters) => {
+    onAdvancedFiltersChange(filters);
   };
 
-  const getSortButtonVariant = (field) => {
-    return sortBy === field ? 'contained' : 'outlined';
+  const handleResetFilters = () => {
+    onAdvancedFiltersChange({
+      searchText: '',
+      cadence: 'all',
+      activityDateFrom: null,
+      activityDateTo: null,
+      status: 'all'
+    });
+    onFilterChange(null); // Clear any active filter
   };
 
   return (
-    <Card elevation={2} sx={{ mb: 4 }}>
-      <CardContent sx={{ p: 3 }}>
-        <Grid container spacing={3} alignItems="center">
-          {/* Search Field */}
-          <Grid item xs={12} md={8}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search work orders by name, description, or location..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: 'text.secondary' }} />
-                    </InputAdornment>
-                  )
-                }
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2
-                }
-              }}
-            />
-          </Grid>
-
-          {/* Filter and Sort Controls */}
-          <Grid item xs={12} md={4}>
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
-              {/* Sort Button */}
+    <Box>
+      {/* Controls Row */}
+      <Card elevation={2} sx={{ mb: 4 }}>
+        <CardContent sx={{ p: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
+            {/* Left side - Route button */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {/* Route Optimization Toggle */}
               <Button
-                variant={getSortButtonVariant('nextDue')}
+                variant={routeOptimized ? 'contained' : 'outlined'}
                 size="small"
-                onClick={() => handleSortToggle('nextDue')}
-                startIcon={getSortIcon('nextDue')}
+                startIcon={<RouteIcon />}
+                onClick={onOptimizeRoute}
+                color="success"
                 sx={{
                   textTransform: 'none',
                   borderRadius: 2,
-                  px: 2
+                  height: '36px', // Match filter button height
+                  ...(routeOptimized && {
+                    backgroundColor: 'success.main',
+                    '&:hover': {
+                      backgroundColor: 'success.dark'
+                    }
+                  })
                 }}
               >
-                Due Date
-              </Button>
-
-              {/* Optimize Route Button */}
-              <Button
-                variant="contained"
-                color="success"
-                onClick={onOptimizeRoute}
-                sx={{ textTransform: 'none', borderRadius: 2 }}
-              >
-                Optimize Route
+                Route
               </Button>
             </Box>
-          </Grid>
 
-          {/* Results Count */}
-          {searchTerm && (
-            <Grid item xs={12}>
-              <Chip
-                label={`${resultCount} result${resultCount !== 1 ? 's' : ''} found`}
-                variant="outlined"
-                size="small"
-                sx={{ mt: 1 }}
+            {/* Center - Filter Buttons */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', flex: 1, justifyContent: 'flex-start', ml: 2 }}>
+              <FilterButtons
+                activeFilter={activeFilter}
+                onFilterChange={onFilterChange}
+                newCount={newCount}
+                upcomingCount={upcomingCount}
+                thisWeekCount={thisWeekCount}
+                overdueCount={overdueCount}
               />
-            </Grid>
-          )}
-        </Grid>
-      </CardContent>
-    </Card>
+            </Box>
+
+            {/* Right side - Filters and Results */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+              {/* Advanced Filter Button with Badge */}
+              <Badge
+                badgeContent={getActiveFilterCount()}
+                color="error"
+                sx={{
+                  '& .MuiBadge-badge': {
+                    display: getActiveFilterCount() > 0 ? 'block' : 'none',
+                    fontSize: '0.75rem',
+                    height: 18,
+                    minWidth: 18,
+                    borderRadius: '50%'
+                  }
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<FilterIcon />}
+                  onClick={() => setAdvancedFilterOpen(true)}
+                  sx={{ textTransform: 'none', borderRadius: 2 }}
+                >
+                  Filters
+                </Button>
+              </Badge>
+
+              {/* Reset Button - show only when filters are active */}
+              {(getActiveFilterCount() > 0 || activeFilter) && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<ClearIcon />}
+                  onClick={handleResetFilters}
+                  color="error"
+                  sx={{ textTransform: 'none', borderRadius: 2 }}
+                >
+                  Reset
+                </Button>
+              )}
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Advanced Filter Modal */}
+      <AdvancedFilterModal
+        open={advancedFilterOpen}
+        onClose={() => setAdvancedFilterOpen(false)}
+        onApply={handleAdvancedFiltersApply}
+        currentFilters={advancedFilters}
+      />
+    </Box>
   );
 };
 
 SearchAndFilter.propTypes = {
-  searchTerm: PropTypes.string.isRequired,
-  onSearchChange: PropTypes.func.isRequired,
-  sortBy: PropTypes.string.isRequired,
-  sortOrder: PropTypes.string.isRequired,
-  onSortChange: PropTypes.func.isRequired,
-  resultCount: PropTypes.number.isRequired,
-  onOptimizeRoute: PropTypes.func.isRequired
+  // Dashboard filter props
+  activeFilter: PropTypes.string,
+  onFilterChange: PropTypes.func.isRequired,
+  newCount: PropTypes.number.isRequired,
+  upcomingCount: PropTypes.number.isRequired,
+  thisWeekCount: PropTypes.number.isRequired,
+  overdueCount: PropTypes.number.isRequired,
+  // Route optimization props
+  routeOptimized: PropTypes.bool,
+  onOptimizeRoute: PropTypes.func.isRequired,
+  // Advanced filter props
+  advancedFilters: PropTypes.shape({
+    searchText: PropTypes.string,
+    cadence: PropTypes.string,
+    activityDateFrom: PropTypes.object,
+    activityDateTo: PropTypes.object,
+    status: PropTypes.string
+  }),
+  onAdvancedFiltersChange: PropTypes.func.isRequired,
+  // Results
+  resultCount: PropTypes.number.isRequired
 };
 
 export default SearchAndFilter;

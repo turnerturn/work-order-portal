@@ -50,7 +50,7 @@
     "schedule": {
       "cron": "0 0 * * 1",
       "frequency": "weekly",
-      "nextDue": "2025-06-23T10:00:00Z",
+      "nextDue": "2025-07-03T10:00:00Z",
       "dayOfWeek": "monday",
       "restrictions": ["business_hours"]
     }

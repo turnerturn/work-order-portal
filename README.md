@@ -70,24 +70,46 @@ This section has moved here: [https://vitejs.dev/guide/build.html](https://vitej
 This section has moved here: [https://vitejs.dev/guide/troubleshooting.html](https://vitejs.dev/guide/troubleshooting.html)
 
 
-## TODO:
-- List acitivity items similar to the Shelly cloud interface of activity.
-- Move dashboard stats to buttons on the sort and filter.  No dashboard, just the different colors of buttons with text identifier of button make most efficient use of the space and when clicked, the color fills the button. When toggled off, button is filled a different off color.  And u still want the totals as a badge notification aligned right snug in the corner of the button.
+## Vibes - Design System & UX Requirements:
 
-I want a filter icon button aligned right on the search and filter.  When clicked , it gives me modal of additional filters such as search by text, schedule cadence, activity date includes date range.  I no longer want the search text on the main search and filter component, it’s only on the modal.  When additional filters are applied , I want the filter icon to have badge notification of filter count.  SearchAndFilter bar should also have a reset button to clear all filters.
+### 1. Activity List Interface Enhancement
+**Refined Prompt**: Implement a mobile-first activity timeline interface with expandable cards, similar to modern cloud service activity feeds. Each activity item should display date, description, and status in a compact row format with smooth expand/collapse animations for detailed notes and editing capabilities.
 
-Optimize Route button should also be a button which is toggled on/off.  It’s filled green when toggled on.
+### 2. Dashboard Stats as Interactive Filter Buttons
+**Refined Prompt**: Replace the traditional dashboard cards with a horizontal row of color-coded filter buttons integrated into the search/filter bar. Each button shows category name, uses semantic colors (e.g., red for overdue, green for completed), and displays count badges in the top-right corner. Active filters should have filled background, inactive should show outline style.
 
-When I click schedule and then pick date on the schedule modal: I want to return back to the portal.  Currently it returns to the details modal.  When scheduled, I simply want to add a new line item to my detail’s activity list. Set status accordingly. Text will be “work scheduled”.
+### 3. Advanced Filter Modal System
+**Refined Prompt**: Create a comprehensive filter modal triggered by a filter icon button with badge notifications for active filter count. The modal should include text search, schedule cadence filtering, date range pickers, and other advanced criteria. Main search bar should be simplified to only show current filter summaries and reset functionality.
 
-Activity list items should be concise mobile friendly table with expandable rows when we have notes.  Summary of each row will be date, description, status.  Where status is complete, incomplete, canceled. When the “…” is clicked, we can update status and add notes and edit description.  
+### 4. Toggle State Route Optimization
+**Refined Prompt**: Convert the route optimization feature into a persistent toggle button with visual state indication (green filled when active, outline when inactive). The optimized order should remain applied until manually toggled off or new filters are applied.
 
-NextDue will be determined from the activity where incomplete and scheduled date is >= now and scheduled date is <= all other scheduled activity for this work item.
+### 5. Streamlined Scheduling Workflow
+**Refined Prompt**: Implement a scheduling flow that returns directly to the main portal after date selection, automatically adding a "work scheduled" activity entry to the work order's activity timeline with appropriate status tracking.
 
-Work order card should also have a section of visual indicator tell user the next suggested date to schedule work for an item based on its cadence.   
+### 6. Mobile-Optimized Activity Table
+**Refined Prompt**: Design a responsive activity table with expandable rows, showing date, description, and status icons in the collapsed state. Expandable details should reveal notes, edit capabilities, and status management with smooth animations and touch-friendly controls.
 
-Remove the days of the week selection from the cadence details on work order detail.
+### 7. Smart Next Due Date Logic
+**Refined Prompt**: Implement intelligent next due date calculation based on incomplete scheduled activities, considering current date and cadence patterns to surface the most relevant upcoming work date.
 
-All individual labels/inputs should be on individual rows when dealing with modals.
+### 8. Visual Schedule Indicators
+**Refined Prompt**: Add visual scheduling hints to work order cards showing suggested next schedule dates based on cadence patterns, using subtle color coding and typography to guide user scheduling decisions.
 
+### 9. Simplified Cadence Configuration
+**Refined Prompt**: Streamline the cadence selection interface by removing day-of-week complexity, focusing on frequency patterns (daily, weekly, monthly, etc.) with cleaner modal layouts.
 
+### 10. Modal Layout Standardization
+**Refined Prompt**: Establish consistent modal design patterns with each form field on individual rows, proper spacing, clear hierarchy, and mobile-optimized touch targets for improved usability across all dialogs.
+
+### Original Requirements (For Reference):
+
+- After i click schedule and pick a date, i want to return back to the portal of work order cards.  I dont want to render the details modal.
+
+- Cadence should only be my frequence selection. Remove status, day of week, and next due date inputs from this details section.
+
+- Next Due Date will actually be changed to be a sub-text of the cadence selection which determines suggestion for next scheduled activity.  i.e.. get cadence selection and most recent activity date before now().  subtext will indicate the next sugggested activity date to be scheduled.
+
+- The details modal should only have 1 row per label/input.  The label should be empbeded at the top of the input.  To conserve mobile ffriendly realestate on the web page.
+
+- Activities should stretch the width of its parent modal.  With adequate padding.  The activities modal should allow me to edit the status.  When row is clicked, we will have modal allowing us to update date,  description , status.  And will have a list group of text items i can add or delete (trash icon).  I will use this as a list of reminders associated with that work activity.
