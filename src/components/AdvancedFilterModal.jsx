@@ -1,10 +1,15 @@
 import {
     Close as CloseIcon,
-    Search as SearchIcon
+    FiberNew as NewIcon,
+    Warning as OverdueIcon,
+    Search as SearchIcon,
+    DateRange as ThisWeekIcon,
+    Schedule as UpcomingIcon
 } from '@mui/icons-material';
 import {
     Box,
     Button,
+    Chip,
     Dialog,
     DialogActions,
     DialogContent,
@@ -28,7 +33,14 @@ const AdvancedFilterModal = ({
   open,
   onClose,
   onApply,
-  currentFilters
+  currentFilters,
+  // Dashboard filter props
+  activeFilter,
+  onFilterChange,
+  newCount,
+  upcomingCount,
+  thisWeekCount,
+  overdueCount
 }) => {
   const [filters, setFilters] = useState({
     searchText: currentFilters?.searchText || '',
@@ -60,8 +72,40 @@ const AdvancedFilterModal = ({
     };
     setFilters(resetFilters);
     onApply(resetFilters);
+    onFilterChange(null); // Clear dashboard filter
     onClose();
   };
+
+  const statFilters = [
+    {
+      key: 'new',
+      label: 'New',
+      count: newCount,
+      icon: NewIcon,
+      color: 'info'
+    },
+    {
+      key: 'upcoming',
+      label: 'This Month',
+      count: upcomingCount,
+      icon: UpcomingIcon,
+      color: 'success'
+    },
+    {
+      key: 'thisWeek',
+      label: 'This Week',
+      count: thisWeekCount,
+      icon: ThisWeekIcon,
+      color: 'warning'
+    },
+    {
+      key: 'overdue',
+      label: 'Overdue',
+      count: overdueCount,
+      icon: OverdueIcon,
+      color: 'error'
+    }
+  ];
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -85,8 +129,37 @@ const AdvancedFilterModal = ({
               <CloseIcon />
             </IconButton>
           </Box>
-        </DialogTitle>        <DialogContent sx={{ pt: 4, pb: 3, px: 3 }}>
+        </DialogTitle>
+
+        <DialogContent sx={{ pt: 4, pb: 3, px: 3 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {/* Dashboard Filter Chips */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary' }}>
+                Quick Filters
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {statFilters.map((filter) => {
+                  const Icon = filter.icon;
+                  return (
+                    <Chip
+                      key={filter.key}
+                      icon={<Icon sx={{ fontSize: 16 }} />}
+                      label={`${filter.label} (${filter.count})`}
+                      variant={activeFilter === filter.key ? 'filled' : 'outlined'}
+                      color={filter.color}
+                      clickable
+                      onClick={() => onFilterChange(activeFilter === filter.key ? null : filter.key)}
+                      sx={{
+                        '& .MuiChip-icon': {
+                          fontSize: 16
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </Box>
+            </Box>
             {/* Search Text */}
             <TextField
               fullWidth
@@ -193,7 +266,14 @@ AdvancedFilterModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onApply: PropTypes.func.isRequired,
-  currentFilters: PropTypes.object
+  currentFilters: PropTypes.object,
+  // Dashboard filter props
+  activeFilter: PropTypes.string,
+  onFilterChange: PropTypes.func.isRequired,
+  newCount: PropTypes.number.isRequired,
+  upcomingCount: PropTypes.number.isRequired,
+  thisWeekCount: PropTypes.number.isRequired,
+  overdueCount: PropTypes.number.isRequired
 };
 
 export default AdvancedFilterModal;

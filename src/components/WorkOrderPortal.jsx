@@ -1,15 +1,15 @@
 import {
-  Assignment as AssignmentIcon
+    Assignment as AssignmentIcon
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  Grid,
-  Paper,
-  Typography
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Container,
+    Grid,
+    Paper,
+    Typography
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useWorkOrders } from '../hooks/useWorkOrders';
@@ -116,19 +116,19 @@ const WorkOrderPortal = () => {
     setSelectedWorkOrder(null);
   };
 
-  const handleOptimizeRoute = () => {
-    if (routeOptimized) {
-      // Turn off optimization
+  const handleOptimizeRoute = (optimizedOrder) => {
+    // optimizedOrder is an array of work orders in optimized sequence
+    if (optimizedOrder && optimizedOrder.length > 0) {
+      setRouteOptimized(true);
+      // Convert work orders back to indices for current implementation
+      const indices = optimizedOrder.map(wo =>
+        filteredAndSortedWorkOrders.findIndex(fwo => fwo.uuid === wo.uuid)
+      );
+      setOptimizedOrder(indices);
+    } else {
+      // Turn off optimization if no order provided
       setRouteOptimized(false);
       setOptimizedOrder(null);
-    } else {
-      // Turn on optimization - for now, just toggle state
-      // In a real implementation, you might show the origin selection modal
-      setRouteOptimized(true);
-      // Simple mock optimization
-      const indices = filteredAndSortedWorkOrders.map((_, index) => index);
-      const shuffled = [...indices].sort(() => Math.random() - 0.5);
-      setOptimizedOrder(shuffled);
     }
   };
 
