@@ -1,23 +1,23 @@
 import {
-    Add as AddIcon,
-    Assignment as AssignmentIcon
+  Assignment as AssignmentIcon
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    CircularProgress,
-    Container,
-    Grid,
-    Paper,
-    Typography
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Grid,
+  Paper,
+  Typography
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useWorkOrders } from '../hooks/useWorkOrders';
-import { isOverdue } from '../utils/dateUtils';
+import directionsService from '../services/directionsService';
+import { isNewWorkOrder, isOverdue, isThisWeek, isUpcoming } from '../utils/dateUtils';
 import DashboardStats from './DashboardStats';
-import ItineraryModal from './ItineraryModal';
 import NavBar from './NavBar';
+import OptimizeRouteModal from './OptimizeRouteModal';
 import SearchAndFilter from './SearchAndFilter';
 import WorkOrderCard from './WorkOrderCard';
 import WorkOrderDetailsModal from './WorkOrderDetailsModal';
@@ -25,14 +25,15 @@ import WorkOrderDetailsModal from './WorkOrderDetailsModal';
 const WorkOrderPortal = () => {
   const { workOrders, loading, error, refreshWorkOrders } = useWorkOrders();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [dashboardFilter, setDashboardFilter] = useState(null); // New filter from dashboard clicks
   const [sortBy, setSortBy] = useState('nextDue');
   const [sortOrder, setSortOrder] = useState('asc');
 
   // Modal states
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [itineraryModalOpen, setItineraryModalOpen] = useState(false);
   const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
+  const [optimizeModalOpen, setOptimizeModalOpen] = useState(false);
+  const [optimizedOrder, setOptimizedOrder] = useState(null);
 
   // Filter and sort work orders
   const filteredAndSortedWorkOrders = React.useMemo(() => {
@@ -43,14 +44,25 @@ const WorkOrderPortal = () => {
 
       if (!matchesSearch) return false;
 
-      switch (filterStatus) {
-        case 'overdue':
-          return isOverdue(wo.schedule.nextDue);
-        case 'upcoming':
-          return !isOverdue(wo.schedule.nextDue);
-        default:
-          return true;
+      // Apply dashboard filter if set
+      if (dashboardFilter) {
+        switch (dashboardFilter) {
+          case 'all':
+            return true; // Show all work orders
+          case 'new':
+            return isNewWorkOrder(wo['created-date']);
+          case 'upcoming':
+            return isUpcoming(wo.schedule.nextDue);
+          case 'thisWeek':
+            return isThisWeek(wo.schedule.nextDue);
+          case 'overdue':
+            return isOverdue(wo.schedule.nextDue);
+          default:
+            return true;
+        }
       }
+
+      return true;
     });
 
     // Sort the filtered results
@@ -86,24 +98,26 @@ const WorkOrderPortal = () => {
     });
 
     return filtered;
-  }, [workOrders, searchTerm, filterStatus, sortBy, sortOrder]);  const overdueCount = workOrders.filter(wo => isOverdue(wo.schedule.nextDue)).length;
-  const upcomingCount = workOrders.filter(wo => !isOverdue(wo.schedule.nextDue)).length;
+  }, [workOrders, searchTerm, dashboardFilter, sortBy, sortOrder]);
+
+  // Calculate dashboard stats
+  const newCount = workOrders.filter(wo => isNewWorkOrder(wo['created-date'])).length;
+  const overdueCount = workOrders.filter(wo => isOverdue(wo.schedule.nextDue)).length;
+  const upcomingCount = workOrders.filter(wo => isUpcoming(wo.schedule.nextDue)).length;
+  const thisWeekCount = workOrders.filter(wo => isThisWeek(wo.schedule.nextDue)).length;
 
   const handleAddNewOrder = () => {
     console.log('Add new work order');
   };
 
-  const handleCreateItinerary = () => {
-    setItineraryModalOpen(true);
-  };
-
-  const handleScheduleClick = (workOrder) => {
-    console.log('Schedule clicked for:', workOrder.name);
-  };
-
   const handleViewDetails = (workOrder) => {
     setSelectedWorkOrder(workOrder);
     setDetailsModalOpen(true);
+  };
+
+  const handleSchedule = (workOrder, date) => {
+    console.log('Schedule work order:', workOrder, 'for date:', date);
+    // Here you would typically update the work order schedule in your backend
   };
 
   const handleSaveWorkOrder = (updatedWorkOrder) => {
@@ -113,19 +127,34 @@ const WorkOrderPortal = () => {
     setSelectedWorkOrder(null);
   };
 
-  const handleCreateItineraryFromModal = (selectedWorkOrders, originAddress, date) => {
-    console.log('Create itinerary:', { selectedWorkOrders, originAddress, date });
-    // Here you would handle the itinerary creation
-    setItineraryModalOpen(false);
-  };
-
-
   const toggleSort = (field) => {
     if (sortBy === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
       setSortBy(field);
       setSortOrder('asc');
+    }
+  };
+
+  const handleOptimizeRoute = () => setOptimizeModalOpen(true);
+
+  const handleDashboardStatClick = (filterType) => {
+    setDashboardFilter(dashboardFilter === filterType ? null : filterType);
+  };
+
+  const handleOptimizeSubmit = async (origin) => {
+    setOptimizeModalOpen(false);
+    // Call directionsService.optimizeRoute
+    try {
+      const destinations = filteredAndSortedWorkOrders.map(wo => wo.address);
+      const result = await directionsService.optimizeRoute(origin, destinations);
+      if (result.status === 'OK' && result.routes[0]) {
+        setOptimizedOrder(result.routes[0].waypoint_order);
+      }
+    } catch (error) {
+      // Handle error by logging and resetting optimized order
+      console.error('Failed to optimize route:', error);
+      setOptimizedOrder(null);
     }
   };
 
@@ -157,7 +186,6 @@ const WorkOrderPortal = () => {
       {/* Navigation Bar */}
       <NavBar
         onAddNewOrder={handleAddNewOrder}
-        onCreateItinerary={handleCreateItinerary}
         onRefresh={refreshWorkOrders}
         loading={loading}
       />
@@ -167,20 +195,22 @@ const WorkOrderPortal = () => {
         {/* Dashboard Stats */}
         <DashboardStats
           totalCount={workOrders.length}
-          overdueCount={overdueCount}
+          newCount={newCount}
           upcomingCount={upcomingCount}
+          thisWeekCount={thisWeekCount}
+          overdueCount={overdueCount}
+          onStatClick={handleDashboardStatClick}
         />
 
         {/* Search and Filter */}
         <SearchAndFilter
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          filterStatus={filterStatus}
-          onFilterChange={setFilterStatus}
           sortBy={sortBy}
           sortOrder={sortOrder}
           onSortChange={toggleSort}
           resultCount={filteredAndSortedWorkOrders.length}
+          onOptimizeRoute={handleOptimizeRoute}
         />
 
         {/* Error Message */}
@@ -223,44 +253,27 @@ const WorkOrderPortal = () => {
               }}
             />
             <Typography variant="h5" component="h3" sx={{ mb: 2, fontWeight: 600 }}>
-              {searchTerm ? 'No matching work orders' : 'No work orders yet'}
+              { 'No work orders found...'}
             </Typography>
             <Typography
               variant="body1"
               color="text.secondary"
               sx={{ mb: 4, maxWidth: 500, mx: 'auto' }}
             >
-              {searchTerm
-                ? 'Try adjusting your search terms or filters to find what you\'re looking for.'
-                : 'Get started by creating your first work order to track maintenance and schedules.'
-              }
+              {'Try adjusting your filters.'}
             </Typography>
-            {!searchTerm && (
-              <Button
-                variant="contained"
-                size="large"
-                startIcon={<AddIcon />}
-                onClick={handleAddNewOrder}
-                sx={{
-                  textTransform: 'none',
-                  py: 1.5,
-                  px: 4,
-                  fontSize: '1rem',
-                  fontWeight: 600
-                }}
-              >
-                Create Work Order
-              </Button>
-            )}
           </Paper>
         ) : (
           <Grid container spacing={3}>
-            {filteredAndSortedWorkOrders.map((workOrder) => (
+            {(optimizedOrder
+              ? optimizedOrder.map(idx => filteredAndSortedWorkOrders[idx])
+              : filteredAndSortedWorkOrders
+            ).map((workOrder) => (
               <Grid item xs={12} key={workOrder.uuid}>
                 <WorkOrderCard
                   workOrder={workOrder}
-                  onScheduleClick={handleScheduleClick}
                   onViewDetails={handleViewDetails}
+                  onSchedule={(date) => handleSchedule(workOrder, date)}
                 />
               </Grid>
             ))}
@@ -279,12 +292,11 @@ const WorkOrderPortal = () => {
         onSave={handleSaveWorkOrder}
       />
 
-      {/* Itinerary Modal */}
-      <ItineraryModal
-        open={itineraryModalOpen}
-        onClose={() => setItineraryModalOpen(false)}
-        workOrders={workOrders}
-        onCreateItinerary={handleCreateItineraryFromModal}
+      {/* Optimize Route Modal */}
+      <OptimizeRouteModal
+        open={optimizeModalOpen}
+        onClose={() => setOptimizeModalOpen(false)}
+        onSubmit={handleOptimizeSubmit}
       />
     </Box>
   );

@@ -63,10 +63,10 @@ export const getScheduleDescription = (schedule) => {
     'weekly': 'Weekly',
     'monthly': 'Monthly',
     'quarterly': 'Quarterly',
-    'annually': 'Annually'
+    'annually': 'Annual'
   };
 
-  return frequencyMap[schedule.frequency] || 'Custom schedule';
+  return frequencyMap[schedule.frequency] || 'Custom';
 };
 
 export const getStatusColor = (status) => {
@@ -85,4 +85,46 @@ export const getPriorityColor = (isOverdue, daysUntilDue) => {
   if (daysUntilDue <= 7) return 'text-orange-600';
   if (daysUntilDue <= 30) return 'text-yellow-600';
   return 'text-green-600';
+};
+
+// New utility functions for dashboard stats
+export const isThisWeek = (dateString) => {
+  try {
+    if (!dateString) return false;
+    const date = parseISO(dateString);
+    const now = new Date();
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+    startOfWeek.setHours(0, 0, 0, 0);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(endOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    return date >= startOfWeek && date <= endOfWeek;
+  } catch {
+    return false;
+  }
+};
+
+export const isNewWorkOrder = (createdDateString) => {
+  try {
+    if (!createdDateString) return false;
+    const createdDate = parseISO(createdDateString);
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    return createdDate >= sevenDaysAgo;
+  } catch {
+    return false;
+  }
+};
+
+export const isUpcoming = (dueDateString) => {
+  try {
+    if (!dueDateString) return false;
+    const dueDate = parseISO(dueDateString);
+    const now = new Date();
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+    return dueDate > now && dueDate <= thirtyDaysFromNow;
+  } catch {
+    return false;
+  }
 };

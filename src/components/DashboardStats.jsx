@@ -13,25 +13,34 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
-const DashboardStats = ({ totalCount, overdueCount, upcomingCount }) => {
+const DashboardStats = ({
+  totalCount,
+  newCount,
+  upcomingCount,
+  thisWeekCount,
+  overdueCount,
+  onStatClick
+}) => {
   const theme = useTheme();
 
   const stats = [
     {
-      title: 'Total Work Orders',
+      title: 'All',
       value: totalCount,
       icon: AssignmentIcon,
       color: theme.palette.primary.main,
       bgGradient: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-      lightColor: theme.palette.primary.light
+      lightColor: theme.palette.primary.light,
+      filterType: 'all'
     },
     {
-      title: 'Overdue',
-      value: overdueCount,
-      icon: WarningIcon,
-      color: theme.palette.error.main,
-      bgGradient: `linear-gradient(135deg, ${theme.palette.error.main} 0%, ${theme.palette.error.dark} 100%)`,
-      lightColor: theme.palette.error.light
+      title: 'New',
+      value: newCount,
+      icon: AssignmentIcon,
+      color: theme.palette.info.main,
+      bgGradient: `linear-gradient(135deg, ${theme.palette.info.main} 0%, ${theme.palette.info.dark} 100%)`,
+      lightColor: theme.palette.info.light,
+      filterType: 'new'
     },
     {
       title: 'Upcoming',
@@ -39,7 +48,26 @@ const DashboardStats = ({ totalCount, overdueCount, upcomingCount }) => {
       icon: ScheduleIcon,
       color: theme.palette.success.main,
       bgGradient: `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${theme.palette.success.dark} 100%)`,
-      lightColor: theme.palette.success.light
+      lightColor: theme.palette.success.light,
+      filterType: 'upcoming'
+    },
+    {
+      title: 'This Week',
+      value: thisWeekCount,
+      icon: AssignmentIcon,
+      color: theme.palette.warning.main,
+      bgGradient: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${theme.palette.warning.dark} 100%)`,
+      lightColor: theme.palette.warning.light,
+      filterType: 'thisWeek'
+    },
+    {
+      title: 'Overdue',
+      value: overdueCount,
+      icon: WarningIcon,
+      color: theme.palette.error.main,
+      bgGradient: `linear-gradient(135deg, ${theme.palette.error.main} 0%, ${theme.palette.error.dark} 100%)`,
+      lightColor: theme.palette.error.light,
+      filterType: 'overdue'
     }
   ];
 
@@ -48,9 +76,10 @@ const DashboardStats = ({ totalCount, overdueCount, upcomingCount }) => {
       {stats.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
-          <Grid item xs={12} sm={6} md={4} key={stat.title}>
+          <Grid item xs={12} sm={6} md={2.4} key={stat.title}>
             <Card
               elevation={3}
+              onClick={() => onStatClick?.(stat.filterType)}
               sx={{
                 background: stat.bgGradient,
                 color: 'white',
@@ -58,6 +87,7 @@ const DashboardStats = ({ totalCount, overdueCount, upcomingCount }) => {
                 overflow: 'hidden',
                 position: 'relative',
                 transition: 'all 0.3s ease-in-out',
+                cursor: onStatClick ? 'pointer' : 'default',
                 '&:hover': {
                   transform: 'translateY(-4px)',
                   boxShadow: theme.shadows[8]
@@ -130,8 +160,11 @@ const DashboardStats = ({ totalCount, overdueCount, upcomingCount }) => {
 
 DashboardStats.propTypes = {
   totalCount: PropTypes.number.isRequired,
+  newCount: PropTypes.number.isRequired,
+  upcomingCount: PropTypes.number.isRequired,
+  thisWeekCount: PropTypes.number.isRequired,
   overdueCount: PropTypes.number.isRequired,
-  upcomingCount: PropTypes.number.isRequired
+  onStatClick: PropTypes.func
 };
 
 export default DashboardStats;

@@ -6,7 +6,7 @@ class DirectionsService {
     // 1. Store the API key securely (environment variables, backend proxy)
     // 2. Use a backend service to make the API calls to avoid exposing the key
     // 3. Implement proper error handling and retry logic
-    this.apiKey = process.env.GOOGLE_DIRECTIONS_API_KEY || 'API_KEY';
+    this.apiKey = import.meta.env.VITE_GOOGLE_DIRECTIONS_API_KEY || 'API_KEY';
     this.baseUrl = 'https://maps.googleapis.com/maps/api/directions/json';
   }
 

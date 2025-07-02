@@ -1,39 +1,44 @@
 import {
-    Close as CloseIcon,
-    ExpandMore as ExpandMoreIcon,
-    History as HistoryIcon,
-    Save as SaveIcon
+  Close as CloseIcon,
+  ExpandMore as ExpandMoreIcon,
+  History as HistoryIcon,
+  MoreHoriz as MoreIcon,
+  Save as SaveIcon
 } from '@mui/icons-material';
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Alert,
-    Box,
-    Button,
-    Chip,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    Grid,
-    IconButton,
-    InputLabel,
-    List,
-    ListItem,
-    ListItemText,
-    MenuItem,
-    Select,
-    TextField,
-    Typography
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  MenuItem,
+  Select,
+  TextField,
+  Typography
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatDate, getStatusColor, isPending } from '../utils/dateUtils';
+import ActivityDetailsModal from './ActivityDetailsModal';
 
 const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [activityModalOpen, setActivityModalOpen] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState(null);
   const [formData, setFormData] = useState({
     name: workOrder?.name || '',
     description: workOrder?.description || '',
@@ -42,6 +47,18 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
     dayOfWeek: workOrder?.schedule?.dayOfWeek || '',
     nextDue: workOrder?.schedule?.nextDue || ''
   });
+
+  useEffect(() => {
+    setFormData({
+      name: workOrder?.name || '',
+      description: workOrder?.description || '',
+      address: workOrder?.address || '',
+      frequency: workOrder?.schedule?.frequency || '',
+      dayOfWeek: workOrder?.schedule?.dayOfWeek || '',
+      nextDue: workOrder?.schedule?.nextDue || ''
+    });
+    setIsEditing(false);
+  }, [workOrder, open]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -68,6 +85,31 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
     setIsEditing(false);
   };
 
+  const handleActivityEdit = (activity) => {
+    setSelectedActivity(activity);
+    setActivityModalOpen(true);
+  };
+
+  const handleActivitySave = (updatedActivity) => {
+    // Update the activity in the work order
+    const updatedWorkOrder = {
+      ...workOrder,
+      activity: workOrder.activity.map(act =>
+        act.id === updatedActivity.id ? updatedActivity : act
+      )
+    };
+    if (onSave) onSave(updatedWorkOrder);
+  };
+
+  const handleActivityDelete = (activityToDelete) => {
+    // Remove the activity from the work order
+    const updatedWorkOrder = {
+      ...workOrder,
+      activity: workOrder.activity.filter(act => act.id !== activityToDelete.id)
+    };
+    if (onSave) onSave(updatedWorkOrder);
+  };
+
   const handleCancel = () => {
     setFormData({
       name: workOrder?.name || '',
@@ -79,6 +121,7 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
     });
     setIsEditing(false);
   };
+
 
   if (!workOrder) return null;
 
@@ -156,10 +199,10 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
             </Grid>
           </Grid>
 
-          {/* Schedule Information */}
+          {/* Schedule Cadence Information */}
           <Grid item xs={12}>
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-              Schedule
+              Cadence
             </Typography>
 
             <Grid container spacing={2}>
@@ -227,13 +270,13 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
             </Grid>
           </Grid>
 
-          {/* Activity History */}
+          {/* Activity */}
           <Grid item xs={12}>
             <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="history-content"
-                id="history-header"
+                aria-controls="activity-content"
+                id="activity-header"
                 sx={{
                   backgroundColor: 'grey.50',
                   borderRadius: 2,
@@ -245,7 +288,7 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <HistoryIcon color="primary" />
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    History ({workOrder.activity?.length || 0} activities)
+                    Activity ({workOrder.activity?.length || 0} activities)
                   </Typography>
                 </Box>
               </AccordionSummary>
@@ -280,12 +323,21 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
                             </Box>
                           }
                         />
+                        <ListItemSecondaryAction>
+                          <IconButton
+                            edge="end"
+                            onClick={() => handleActivityEdit(activity)}
+                            size="small"
+                          >
+                            <MoreIcon />
+                          </IconButton>
+                        </ListItemSecondaryAction>
                       </ListItem>
                     ))}
                   </List>
                 ) : (
                   <Alert severity="info" sx={{ borderRadius: 2 }}>
-                    No activity history available for this work order.
+                    No activity available for this work order.
                   </Alert>
                 )}
               </AccordionDetails>
@@ -338,6 +390,18 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
           </>
         )}
       </DialogActions>
+
+      {/* Activity Details Modal */}
+      <ActivityDetailsModal
+        open={activityModalOpen}
+        onClose={() => {
+          setActivityModalOpen(false);
+          setSelectedActivity(null);
+        }}
+        activity={selectedActivity}
+        onSave={handleActivitySave}
+        onDelete={handleActivityDelete}
+      />
     </Dialog>
   );
 };

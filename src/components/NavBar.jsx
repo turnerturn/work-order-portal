@@ -3,7 +3,6 @@ import {
   Menu as MenuIcon,
   NotificationsOutlined as NotificationsIcon,
   Refresh as RefreshIcon,
-  Route as RouteIcon,
   Settings as SettingsIcon
 } from '@mui/icons-material';
 import {
@@ -19,7 +18,7 @@ import {
 import PropTypes from 'prop-types';
 import VersionInfo from './VersionInfo';
 
-const NavBar = ({ onAddNewOrder, onCreateItinerary, onRefresh, loading = false }) => {
+const NavBar = ({ onAddNewOrder, onRefresh, loading = false }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -109,23 +108,6 @@ const NavBar = ({ onAddNewOrder, onCreateItinerary, onRefresh, loading = false }
           )}
 
           <Button
-            variant="outlined"
-            startIcon={<RouteIcon />}
-            onClick={onCreateItinerary}
-            sx={{
-              ml: 1,
-              textTransform: 'none',
-              fontWeight: 600,
-              px: { xs: 2, sm: 3 },
-              py: 1,
-              borderRadius: 2,
-              fontSize: { xs: '0.875rem', sm: '0.9rem' }
-            }}
-          >
-            {isMobile ? 'Route' : '+ Itinerary'}
-          </Button>
-
-          <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={onAddNewOrder}
@@ -139,7 +121,7 @@ const NavBar = ({ onAddNewOrder, onCreateItinerary, onRefresh, loading = false }
               fontSize: { xs: '0.875rem', sm: '0.9rem' }
             }}
           >
-            {'Work Order'}
+            {'New'}
           </Button>
         </Box>
       </Toolbar>
@@ -149,7 +131,6 @@ const NavBar = ({ onAddNewOrder, onCreateItinerary, onRefresh, loading = false }
 
 NavBar.propTypes = {
   onAddNewOrder: PropTypes.func.isRequired,
-  onCreateItinerary: PropTypes.func.isRequired,
   onRefresh: PropTypes.func.isRequired,
   loading: PropTypes.bool
 };

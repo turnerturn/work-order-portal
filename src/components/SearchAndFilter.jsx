@@ -1,35 +1,29 @@
 import {
-  FilterList as FilterIcon,
-  Search as SearchIcon,
-  KeyboardArrowUp as SortAscIcon,
-  KeyboardArrowDown as SortDescIcon,
-  Sort as SortIcon
+    Search as SearchIcon,
+    KeyboardArrowUp as SortAscIcon,
+    KeyboardArrowDown as SortDescIcon,
+    Sort as SortIcon
 } from '@mui/icons-material';
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  FormControl,
-  Grid,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    Grid,
+    InputAdornment,
+    TextField
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
 const SearchAndFilter = ({
   searchTerm,
   onSearchChange,
-  filterStatus,
-  onFilterChange,
   sortBy,
   sortOrder,
   onSortChange,
-  resultCount
+  resultCount,
+  onOptimizeRoute
 }) => {
   const handleSortToggle = (field) => {
     onSortChange(field);
@@ -76,23 +70,6 @@ const SearchAndFilter = ({
           {/* Filter and Sort Controls */}
           <Grid item xs={12} md={4}>
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
-              {/* Status Filter */}
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={filterStatus}
-                  label="Status"
-                  onChange={(e) => onFilterChange(e.target.value)}
-                  startAdornment={<FilterIcon sx={{ mr: 1, color: 'text.secondary' }} />}
-                  sx={{ borderRadius: 2 }}
-                >
-                  <MenuItem value="all">All Status</MenuItem>
-                  <MenuItem value="overdue">Overdue</MenuItem>
-                  <MenuItem value="scheduled">Scheduled</MenuItem>
-                  <MenuItem value="pending">Pending</MenuItem>
-                </Select>
-              </FormControl>
-
               {/* Sort Button */}
               <Button
                 variant={getSortButtonVariant('nextDue')}
@@ -106,6 +83,16 @@ const SearchAndFilter = ({
                 }}
               >
                 Due Date
+              </Button>
+
+              {/* Optimize Route Button */}
+              <Button
+                variant="contained"
+                color="success"
+                onClick={onOptimizeRoute}
+                sx={{ textTransform: 'none', borderRadius: 2 }}
+              >
+                Optimize Route
               </Button>
             </Box>
           </Grid>
@@ -130,12 +117,11 @@ const SearchAndFilter = ({
 SearchAndFilter.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   onSearchChange: PropTypes.func.isRequired,
-  filterStatus: PropTypes.string.isRequired,
-  onFilterChange: PropTypes.func.isRequired,
   sortBy: PropTypes.string.isRequired,
   sortOrder: PropTypes.string.isRequired,
   onSortChange: PropTypes.func.isRequired,
-  resultCount: PropTypes.number.isRequired
+  resultCount: PropTypes.number.isRequired,
+  onOptimizeRoute: PropTypes.func.isRequired
 };
 
 export default SearchAndFilter;

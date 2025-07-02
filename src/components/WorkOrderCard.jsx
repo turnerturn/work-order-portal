@@ -1,7 +1,6 @@
 import {
   AccessTime as AccessTimeIcon,
   LocationOn as LocationIcon,
-  Settings as SettingsIcon,
   Warning as WarningIcon
 } from '@mui/icons-material';
 import {
@@ -9,14 +8,13 @@ import {
   Box,
   Button,
   Card,
-  CardActions,
   CardContent,
   Grid,
-  IconButton,
   Typography
 } from '@mui/material';
 import { InfoIcon } from 'lucide-react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import {
   formatDate,
   formatRelativeTime,
@@ -25,11 +23,23 @@ import {
   isPending,
   isScheduled
 } from '../utils/dateUtils';
+import ScheduleModal from './ScheduleModal';
 
-const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, compact = false }) => {
+const WorkOrderCard = ({ workOrder, onViewDetails, onSchedule, compact = false }) => {
   const isOrderOverdue = isOverdue(workOrder.schedule.nextDue);
   const isOrderScheduled = isScheduled(workOrder.schedule.nextDue);
   const isOrderPending = isPending(workOrder.schedule.nextDue);
+  const [scheduleModalOpen, setScheduleModalOpen] = React.useState(false);
+
+  const handleSchedule = (e) => {
+    e.stopPropagation();
+    setScheduleModalOpen(true);
+  };
+
+  const handleScheduleSubmit = (date) => {
+    setScheduleModalOpen(false);
+    if (onSchedule) onSchedule(date);
+  };
 
   return (
     <Card
@@ -37,12 +47,14 @@ const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, compact = fa
         width: '100%',
         mb: 3,
         boxShadow: 3,
+        cursor: 'pointer',
         '&:hover': {
           boxShadow: 6,
           transform: 'translateY(-2px)',
           transition: 'all 0.3s ease-in-out'
         }
       }}
+      onClick={() => onViewDetails(workOrder)}
     >
       {/* Overdue Alert Banner */}
       {isOrderOverdue && (
@@ -89,13 +101,6 @@ const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, compact = fa
               {workOrder.description}
             </Typography>
           </Box>
-          <IconButton
-            onClick={() => onScheduleClick(workOrder)}
-            size="small"
-            sx={{ ml: 1 }}
-          >
-            <SettingsIcon />
-          </IconButton>
         </Box>
 
         {/* Key Information Grid */}
@@ -179,19 +184,13 @@ const WorkOrderCard = ({ workOrder, onScheduleClick, onViewDetails, compact = fa
           </Grid>
         </Grid>
       </CardContent>
-
-      {/* Action Buttons */}
-      {!compact && (
-        <CardActions sx={{ px: 2, pb: 2 }}>
-          <Button
-            variant="contained"
-            onClick={() => onViewDetails(workOrder)}
-            sx={{ flex: 1 }}
-          >
-            Details
-          </Button>
-        </CardActions>
-      )}
+      {/* Footer */}
+      <Box sx={{ borderTop: '1px solid', borderColor: 'divider', px: 2, py: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Button size="small" variant="outlined" sx={{ ml: 'auto' }} onClick={handleSchedule}>
+          Schedule
+        </Button>
+      </Box>
+      <ScheduleModal open={scheduleModalOpen} onClose={() => setScheduleModalOpen(false)} onSubmit={handleScheduleSubmit} />
     </Card>
   );
 };
@@ -219,8 +218,8 @@ WorkOrderCard.propTypes = {
       restrictions: PropTypes.arrayOf(PropTypes.string)
     }).isRequired
   }).isRequired,
-  onScheduleClick: PropTypes.func.isRequired,
   onViewDetails: PropTypes.func.isRequired,
+  onSchedule: PropTypes.func,
   compact: PropTypes.bool
 };
 
