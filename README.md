@@ -71,6 +71,8 @@ This section has moved here: [https://vitejs.dev/guide/troubleshooting.html](htt
 
 
 ## TODO:
-- "Last Activity" component on the work card should only be visible via details view.
-- Add feature which uses "Schedule" button to assign a work order to a selected day of the week.
-- Add page which displays week at a glance to view scheduled work for each day this week.
+- Revise the view details modal.  Currently not populating the inputs when you render the details view of a card.
+- Remove the view details button and the settings gear icon from work order card.  instead, i want to open the details modal when the work order card component is clicked.  
+- Remove the Itinerary modal.  Instead, add "Optimize Route" button on SearchAndFilter component.  This uses the existing modal to select origin.  Remove the other inputs from this modal.  On submit, the work-order-portal lists these work order cards per optimized route.
+- add footer to each work order card.  I want this to be wrapped with a thin visual boundary where "Activity" is embedded in-line of the thin boundary. I want a "Schedule" button alligned right on this footer.  When clicked, I want to open modal which has user pick a date for its schedule.  This will then append a new item to the work order json for an array of scheduled activity.  nextDueDate will now be determined from the next date which is nearest current date.  Each of these scheduled items will have a button to indicate when the work was completed.  After completion, we will convert this item to the activity list.  On the details view of the work order, we will need the ability to see the list group of scheduled items and activity.  I should be able to swipe left on both these list group items to delete a record.  I should also have a notes icon on both the scheduled items and the activity items.  Where i can attach notes to the given item.  When scheduled item is converted to activity then these notes will also transfer.  
+
