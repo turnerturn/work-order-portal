@@ -30,6 +30,7 @@ const WorkOrderPortal = () => {
     status: 'all'
   });
   const [routeOptimized, setRouteOptimized] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
 
   // Modal states
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
@@ -116,19 +117,38 @@ const WorkOrderPortal = () => {
     setSelectedWorkOrder(null);
   };
 
-  const handleOptimizeRoute = (optimizedOrder) => {
-    // optimizedOrder is an array of work orders in optimized sequence
-    if (optimizedOrder && optimizedOrder.length > 0) {
-      setRouteOptimized(true);
-      // Convert work orders back to indices for current implementation
-      const indices = optimizedOrder.map(wo =>
-        filteredAndSortedWorkOrders.findIndex(fwo => fwo.uuid === wo.uuid)
-      );
-      setOptimizedOrder(indices);
-    } else {
-      // Turn off optimization if no order provided
+  const handleOptimizeRoute = async (originAddress) => {
+    if (!originAddress) {
+      // Turn off optimization
       setRouteOptimized(false);
       setOptimizedOrder(null);
+      return;
+    }
+
+    try {
+      setIsOptimizing(true);
+
+      // Call the directions service to get optimized route
+      const optimizedWorkOrders = await optimizeRoute(originAddress, filteredAndSortedWorkOrders);
+
+      if (optimizedWorkOrders && optimizedWorkOrders.length > 0) {
+        setRouteOptimized(true);
+        // Convert work orders back to indices for current implementation
+        const indices = optimizedWorkOrders.map(wo =>
+          filteredAndSortedWorkOrders.findIndex(fwo => fwo.uuid === wo.uuid)
+        );
+        setOptimizedOrder(indices);
+      } else {
+        // If optimization failed, turn off optimization
+        setRouteOptimized(false);
+        setOptimizedOrder(null);
+      }
+    } catch (error) {
+      console.error('Error optimizing route:', error);
+      setRouteOptimized(false);
+      setOptimizedOrder(null);
+    } finally {
+      setIsOptimizing(false);
     }
   };
 
@@ -176,6 +196,8 @@ const WorkOrderPortal = () => {
           overdueCount={overdueCount}
           routeOptimized={routeOptimized}
           onOptimizeRoute={handleOptimizeRoute}
+          workOrdersToOptimize={filteredAndSortedWorkOrders}
+          isOptimizing={isOptimizing}
           advancedFilters={advancedFilters}
           onAdvancedFiltersChange={handleAdvancedFiltersChange}
           resultCount={filteredAndSortedWorkOrders.length}

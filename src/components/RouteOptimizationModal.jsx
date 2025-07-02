@@ -1,20 +1,20 @@
 import {
-  Close as CloseIcon,
-  MyLocation as LocationIcon,
-  Route as RouteIcon
+    Close as CloseIcon,
+    MyLocation as LocationIcon,
+    Route as RouteIcon
 } from '@mui/icons-material';
 import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Typography
+    Alert,
+    Box,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    TextField,
+    Typography
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
@@ -152,10 +152,12 @@ const RouteOptimizationModal = ({
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          p: 1
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 3,
+            p: 1
+          }
         }
       }}
     >
@@ -177,7 +179,7 @@ const RouteOptimizationModal = ({
 
       <DialogContent sx={{ pb: 2 }}>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Enter your starting location to optimize the route for {workOrdersToOptimize} work orders scheduled this week.
+          Enter your starting location to optimize the route for {workOrdersToOptimize} work orders. The system will calculate the most efficient travel path.
         </Typography>
 
         <Box sx={{ mb: 3 }}>
@@ -187,7 +189,7 @@ const RouteOptimizationModal = ({
             placeholder="Enter address, city, or coordinates"
             value={originAddress}
             onChange={(e) => setOriginAddress(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             disabled={isOptimizing || isLoadingLocation}
             error={!!error}
             sx={{
@@ -250,7 +252,11 @@ const RouteOptimizationModal = ({
             px: 3
           }}
         >
-          {isValidating ? 'Validating...' : isOptimizing ? 'Optimizing...' : 'Optimize Route'}
+          {(() => {
+            if (isValidating) return 'Validating...';
+            if (isOptimizing) return 'Optimizing...';
+            return 'Optimize Route';
+          })()}
         </Button>
       </DialogActions>
     </Dialog>

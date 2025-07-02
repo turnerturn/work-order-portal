@@ -31,6 +31,8 @@ const SearchAndFilter = ({
   // Route optimization props
   routeOptimized,
   onOptimizeRoute,
+  workOrdersToOptimize,
+  isOptimizing,
   // Advanced filter props
   advancedFilters,
   onAdvancedFiltersChange,
@@ -137,13 +139,32 @@ const SearchAndFilter = ({
     onFilterChange(null); // Clear any active filter
   };
 
-  const handleRouteOptimize = () => {
-    setRouteModalOpen(true);
+  const handleRouteOptimizationSubmit = async (originAddress) => {
+    try {
+      // If already optimized, turn off optimization
+      if (routeOptimized) {
+        onOptimizeRoute(null);
+        setRouteModalOpen(false);
+        return;
+      }
+
+      // Call onOptimizeRoute with the origin address to trigger optimization
+      onOptimizeRoute(originAddress);
+      setRouteModalOpen(false);
+    } catch (error) {
+      console.error('Error optimizing route:', error);
+      // Don't close modal on error - let user try again
+    }
   };
 
-  const handleRouteOptimizationSubmit = (optimizedOrder) => {
-    onOptimizeRoute(optimizedOrder);
-    setRouteModalOpen(false);
+  const handleRouteButtonClick = () => {
+    if (routeOptimized) {
+      // If already optimized, turn it off immediately
+      onOptimizeRoute(null);
+    } else {
+      // Open modal to get origin address
+      setRouteModalOpen(true);
+    }
   };
 
   const filterBadges = getFilterBadges();
@@ -161,7 +182,7 @@ const SearchAndFilter = ({
                 variant={routeOptimized ? 'contained' : 'outlined'}
                 size="small"
                 startIcon={<RouteIcon />}
-                onClick={() => setRouteModalOpen(true)}
+                onClick={handleRouteButtonClick}
                 color="success"
                 sx={{
                   textTransform: 'none',
@@ -175,7 +196,7 @@ const SearchAndFilter = ({
                   })
                 }}
               >
-                Route
+                {routeOptimized ? 'Route Active' : 'Route'}
               </Button>
             </Box>
 
@@ -274,8 +295,8 @@ const SearchAndFilter = ({
         open={routeModalOpen}
         onClose={() => setRouteModalOpen(false)}
         onOptimize={handleRouteOptimizationSubmit}
-        workOrdersToOptimize={[]} // This will be passed from parent
-        isOptimizing={false}
+        workOrdersToOptimize={workOrdersToOptimize ? workOrdersToOptimize.length : 0}
+        isOptimizing={isOptimizing || false}
       />
     </Box>
   );
@@ -292,6 +313,8 @@ SearchAndFilter.propTypes = {
   // Route optimization props
   routeOptimized: PropTypes.bool,
   onOptimizeRoute: PropTypes.func.isRequired,
+  workOrdersToOptimize: PropTypes.array,
+  isOptimizing: PropTypes.bool,
   // Advanced filter props
   advancedFilters: PropTypes.shape({
     searchText: PropTypes.string,

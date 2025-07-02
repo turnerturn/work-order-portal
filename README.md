@@ -113,3 +113,5 @@ This section has moved here: [https://vitejs.dev/guide/troubleshooting.html](htt
 - The details modal should only have 1 row per label/input.  The label should be empbeded at the top of the input.  To conserve mobile ffriendly realestate on the web page.
 
 - Activities should stretch the width of its parent modal.  With adequate padding.  The activities modal should allow me to edit the status.  When row is clicked, we will have modal allowing us to update date,  description , status.  And will have a list group of text items i can add or delete (trash icon).  I will use this as a list of reminders associated with that work activity.
+
+- Add a feature for a feedback button which posts the feedback to a mocked API endpoint.  This will eventually be converted into more vibe coding tasks..
