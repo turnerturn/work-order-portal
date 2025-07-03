@@ -1,25 +1,25 @@
 import {
-    Add as AddIcon,
-    Close as CloseIcon,
-    Delete as DeleteIcon,
-    Save as SaveIcon
+  Add as AddIcon,
+  Close as CloseIcon,
+  Delete as DeleteIcon,
+  Save as SaveIcon
 } from '@mui/icons-material';
 import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    IconButton,
-    InputLabel,
-    List,
-    ListItem,
-    MenuItem,
-    Select,
-    TextField,
-    Typography
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  List,
+  ListItem,
+  MenuItem,
+  Select,
+  TextField,
+  Typography
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -30,7 +30,7 @@ import React, { useState } from 'react';
 const ActivityDetailsModal = ({ open, onClose, activity, onSave, onDelete }) => {
   const [formData, setFormData] = useState({
     date: null,
-    description: '',
+    notes: '',
     status: 'incomplete',
     reminders: []
   });
@@ -40,7 +40,7 @@ const ActivityDetailsModal = ({ open, onClose, activity, onSave, onDelete }) => 
     if (activity) {
       setFormData({
         date: activity.date ? new Date(activity.date) : new Date(),
-        description: activity.description || activity.type || '',
+        notes: activity.notes || activity.type || '',
         status: activity.status || 'incomplete',
         reminders: activity.reminders || []
       });
@@ -76,7 +76,7 @@ const ActivityDetailsModal = ({ open, onClose, activity, onSave, onDelete }) => 
       onSave({
         ...activity,
         date: formData.date?.toISOString().split('T')[0],
-        description: formData.description,
+        notes: formData.notes,
         status: formData.status,
         reminders: formData.reminders
       });
@@ -116,7 +116,7 @@ const ActivityDetailsModal = ({ open, onClose, activity, onSave, onDelete }) => 
         </DialogTitle>
 
         <DialogContent sx={{ px: 3, py: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 2 }}>
             {/* Date Field */}
             <DatePicker
               label="Activity Date"
@@ -130,13 +130,13 @@ const ActivityDetailsModal = ({ open, onClose, activity, onSave, onDelete }) => 
               }}
             />
 
-            {/* Description Field */}
+            {/* Notes Field */}
             <TextField
               fullWidth
-              label="Description"
+              label="Notes"
               variant="outlined"
-              value={formData.description}
-              onChange={(e) => handleFieldChange('description', e.target.value)}
+              value={formData.notes}
+              onChange={(e) => handleFieldChange('notes', e.target.value)}
               multiline
               rows={2}
             />
@@ -187,7 +187,7 @@ const ActivityDetailsModal = ({ open, onClose, activity, onSave, onDelete }) => 
                 <List dense sx={{ bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
                   {formData.reminders.map((reminder, index) => (
                     <ListItem
-                      key={`reminder-${index}`}
+                      key={`reminder-${reminder}-${index}`}
                       sx={{ py: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                     >
                       <Typography variant="body2" sx={{ flex: 1 }}>

@@ -1,19 +1,19 @@
 import {
-    Clear as ClearIcon,
-    Close as CloseIcon,
-    DateRange as DateRangeIcon,
-    FilterList as FilterIcon,
-    Route as RouteIcon,
-    Schedule as ScheduleIcon,
-    Search as SearchIcon
+  Clear as ClearIcon,
+  Close as CloseIcon,
+  DateRange as DateRangeIcon,
+  FilterList as FilterIcon,
+  Route as RouteIcon,
+  Schedule as ScheduleIcon,
+  Search as SearchIcon
 } from '@mui/icons-material';
 import {
-    Badge,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -49,7 +49,7 @@ const SearchAndFilter = ({
     if (advancedFilters.cadence && advancedFilters.cadence !== 'all') count++;
     if (advancedFilters.activityDateFrom || advancedFilters.activityDateTo) count++;
     if (advancedFilters.status && advancedFilters.status !== 'all') count++;
-    if (activeFilter) count++; // Include dashboard filter
+    // Note: activeFilter (quick filters) is not included in advanced filter count
     return count;
   };
 
@@ -77,7 +77,7 @@ const SearchAndFilter = ({
         key: 'search',
         label: `Search: "${advancedFilters.searchText}"`,
         icon: SearchIcon,
-        onRemove: () => handleAdvancedFiltersChange({ ...advancedFilters, searchText: '' })
+        onRemove: () => onAdvancedFiltersChange({ ...advancedFilters, searchText: '' })
       });
     }
 
@@ -86,7 +86,7 @@ const SearchAndFilter = ({
         key: 'cadence',
         label: `Cadence: ${advancedFilters.cadence}`,
         icon: ScheduleIcon,
-        onRemove: () => handleAdvancedFiltersChange({ ...advancedFilters, cadence: 'all' })
+        onRemove: () => onAdvancedFiltersChange({ ...advancedFilters, cadence: 'all' })
       });
     }
 
@@ -105,7 +105,7 @@ const SearchAndFilter = ({
         key: 'dates',
         label: dateLabel,
         icon: DateRangeIcon,
-        onRemove: () => handleAdvancedFiltersChange({
+        onRemove: () => onAdvancedFiltersChange({
           ...advancedFilters,
           activityDateFrom: null,
           activityDateTo: null
@@ -117,7 +117,7 @@ const SearchAndFilter = ({
       badges.push({
         key: 'status',
         label: `Status: ${advancedFilters.status}`,
-        onRemove: () => handleAdvancedFiltersChange({ ...advancedFilters, status: 'all' })
+        onRemove: () => onAdvancedFiltersChange({ ...advancedFilters, status: 'all' })
       });
     }
 
@@ -172,11 +172,11 @@ const SearchAndFilter = ({
   return (
     <Box>
       {/* Controls Row */}
-      <Card elevation={2} sx={{ mb: 4 }}>
+      <Card elevation={2} sx={{ mb: 2 }}>
         <CardContent sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-            {/* Left side - Route button */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Left side - Route button and Quick Filters */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
               {/* Route Optimization Button */}
               <Button
                 variant={routeOptimized ? 'contained' : 'outlined'}
@@ -196,7 +196,72 @@ const SearchAndFilter = ({
                   })
                 }}
               >
-                {routeOptimized ? 'Route Active' : 'Route'}
+                {'Route'}
+              </Button>
+
+              {/* Quick Filter Buttons */}
+              <Button
+                variant={activeFilter === 'new' ? 'contained' : 'outlined'}
+                size="small"
+                onClick={() => onFilterChange(activeFilter === 'new' ? null : 'new')}
+                color="primary"
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  height: '36px',
+                  minWidth: 'auto',
+                  px: 1.5
+                }}
+              >
+                New {newCount > 0 && `(${newCount})`}
+              </Button>
+
+              <Button
+                variant={activeFilter === 'upcoming' ? 'contained' : 'outlined'}
+                size="small"
+                onClick={() => onFilterChange(activeFilter === 'upcoming' ? null : 'upcoming')}
+                color="info"
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  height: '36px',
+                  minWidth: 'auto',
+                  px: 1.5
+                }}
+              >
+                Upcoming {upcomingCount > 0 && `(${upcomingCount})`}
+              </Button>
+
+              <Button
+                variant={activeFilter === 'thisWeek' ? 'contained' : 'outlined'}
+                size="small"
+                onClick={() => onFilterChange(activeFilter === 'thisWeek' ? null : 'thisWeek')}
+                color="warning"
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  height: '36px',
+                  minWidth: 'auto',
+                  px: 1.5
+                }}
+              >
+                This Week {thisWeekCount > 0 && `(${thisWeekCount})`}
+              </Button>
+
+              <Button
+                variant={activeFilter === 'overdue' ? 'contained' : 'outlined'}
+                size="small"
+                onClick={() => onFilterChange(activeFilter === 'overdue' ? null : 'overdue')}
+                color="error"
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  height: '36px',
+                  minWidth: 'auto',
+                  px: 1.5
+                }}
+              >
+                Overdue {overdueCount > 0 && `(${overdueCount})`}
               </Button>
             </Box>
 
@@ -245,6 +310,14 @@ const SearchAndFilter = ({
         </CardContent>
       </Card>
 
+      {/* Filtered Record Count */}
+      <Box sx={{ mb: 2, px: 1 }}>
+        <Box sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
+          Showing {resultCount} work {resultCount === 1 ? 'order' : 'orders'}
+          {(getActiveFilterCount() > 0 || activeFilter) && ' (filtered)'}
+        </Box>
+      </Box>
+
       {/* Filter Badges */}
       {filterBadges.length > 0 && (
         <Box sx={{ mb: 3 }}>
@@ -282,12 +355,6 @@ const SearchAndFilter = ({
         onClose={() => setAdvancedFilterOpen(false)}
         onApply={handleAdvancedFiltersApply}
         currentFilters={advancedFilters}
-        activeFilter={activeFilter}
-        onFilterChange={onFilterChange}
-        newCount={newCount}
-        upcomingCount={upcomingCount}
-        thisWeekCount={thisWeekCount}
-        overdueCount={overdueCount}
       />
 
       {/* Route Optimization Modal */}

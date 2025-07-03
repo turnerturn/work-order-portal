@@ -1,20 +1,22 @@
 import {
-    Assignment as AssignmentIcon
+  Assignment as AssignmentIcon
 } from '@mui/icons-material';
 import {
-    Alert,
-    Box,
-    Button,
-    CircularProgress,
-    Container,
-    Grid,
-    Paper,
-    Typography
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Grid,
+  Paper,
+  Typography
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useWorkOrders } from '../hooks/useWorkOrders';
-import { isNewWorkOrder, isOverdue, isThisWeek, isUpcoming } from '../utils/dateUtils';
+import { optimizeRoute } from '../services/directionsService';
+import { formatDate, isNewWorkOrder, isThisWeek, isUpcomingInTwoWeeks, isWorkOrderOverdue } from '../utils/dateUtils';
 import NavBar from './NavBar';
+import ScheduleNotification from './ScheduleNotification';
 import SearchAndFilter from './SearchAndFilter';
 import WorkOrderCard from './WorkOrderCard';
 import WorkOrderDetailsModal from './WorkOrderDetailsModal';
@@ -37,6 +39,10 @@ const WorkOrderPortal = () => {
   const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
   const [optimizedOrder, setOptimizedOrder] = useState(null);
 
+  // Notification states
+  const [scheduleNotificationOpen, setScheduleNotificationOpen] = useState(false);
+  const [scheduledDateText, setScheduledDateText] = useState('');
+
   // Filter and sort work orders
   const filteredAndSortedWorkOrders = React.useMemo(() => {
     let filtered = workOrders.filter(wo => {
@@ -49,25 +55,34 @@ const WorkOrderPortal = () => {
         if (!matchesSearch) return false;
       }
 
-      // Apply dashboard filter
+      // Apply quick filter (activeFilter)
       if (activeFilter) {
+        let passesQuickFilter = false;
         switch (activeFilter) {
           case 'new':
-            return isNewWorkOrder(wo['created-date']);
-          case 'upcoming':
-            return isUpcoming(wo.schedule.nextDue);
-          case 'thisWeek':
-            return isThisWeek(wo.schedule.nextDue);
-          case 'overdue':
-            return isOverdue(wo.schedule.nextDue);
-          default:
+            passesQuickFilter = isNewWorkOrder(wo['created-date']);
             break;
+          case 'upcoming':
+            passesQuickFilter = isUpcomingInTwoWeeks(wo);
+            break;
+          case 'thisWeek':
+            // For this week, check work orders with activity this week or need attention
+            passesQuickFilter = wo.activity?.some(activity =>
+              isThisWeek(activity.date) && activity.status !== 'completed'
+            );
+            break;
+          case 'overdue':
+            passesQuickFilter = isWorkOrderOverdue(wo);
+            break;
+          default:
+            passesQuickFilter = true;
         }
+        if (!passesQuickFilter) return false;
       }
 
       // Apply advanced filters
       if (advancedFilters.cadence && advancedFilters.cadence !== 'all') {
-        if (wo.schedule.frequency !== advancedFilters.cadence) return false;
+        if (wo.schedule?.frequency !== advancedFilters.cadence) return false;
       }
 
       return true;
@@ -76,11 +91,18 @@ const WorkOrderPortal = () => {
     return filtered;
   }, [workOrders, activeFilter, advancedFilters]);
 
+  // Ensure filteredAndSortedWorkOrders is always an array
+  const safeFilteredWorkOrders = filteredAndSortedWorkOrders || [];
+
   // Calculate dashboard stats
   const newCount = workOrders.filter(wo => isNewWorkOrder(wo['created-date'])).length;
-  const overdueCount = workOrders.filter(wo => isOverdue(wo.schedule.nextDue)).length;
-  const upcomingCount = workOrders.filter(wo => isUpcoming(wo.schedule.nextDue)).length;
-  const thisWeekCount = workOrders.filter(wo => isThisWeek(wo.schedule.nextDue)).length;
+  const overdueCount = workOrders.filter(wo => isWorkOrderOverdue(wo)).length;
+  const upcomingCount = workOrders.filter(wo => isUpcomingInTwoWeeks(wo)).length;
+  const thisWeekCount = workOrders.filter(wo =>
+    wo.activity?.some(activity =>
+      isThisWeek(activity.date) && activity.status !== 'completed'
+    )
+  ).length;
 
   const handleAddNewOrder = () => {
     console.log('Add new work order');
@@ -107,7 +129,14 @@ const WorkOrderPortal = () => {
 
   const handleSchedule = (workOrder, date) => {
     console.log('Schedule work order:', workOrder, 'for date:', date);
-    // Here you would typically update the work order schedule in your backend
+
+    // Show notification with formatted date
+    const formattedDate = formatDate(date);
+    setScheduledDateText(formattedDate);
+    setScheduleNotificationOpen(true);
+
+    // Note: New activity with status 'incomplete' would be added to work order here
+    // This would typically be handled by the backend/state management
   };
 
   const handleSaveWorkOrder = (updatedWorkOrder) => {
@@ -129,13 +158,13 @@ const WorkOrderPortal = () => {
       setIsOptimizing(true);
 
       // Call the directions service to get optimized route
-      const optimizedWorkOrders = await optimizeRoute(originAddress, filteredAndSortedWorkOrders);
+      const optimizedWorkOrders = await optimizeRoute(originAddress, safeFilteredWorkOrders);
 
       if (optimizedWorkOrders && optimizedWorkOrders.length > 0) {
         setRouteOptimized(true);
         // Convert work orders back to indices for current implementation
         const indices = optimizedWorkOrders.map(wo =>
-          filteredAndSortedWorkOrders.findIndex(fwo => fwo.uuid === wo.uuid)
+          safeFilteredWorkOrders.findIndex(fwo => fwo.uuid === wo.uuid)
         );
         setOptimizedOrder(indices);
       } else {
@@ -196,11 +225,11 @@ const WorkOrderPortal = () => {
           overdueCount={overdueCount}
           routeOptimized={routeOptimized}
           onOptimizeRoute={handleOptimizeRoute}
-          workOrdersToOptimize={filteredAndSortedWorkOrders}
+          workOrdersToOptimize={safeFilteredWorkOrders}
           isOptimizing={isOptimizing}
           advancedFilters={advancedFilters}
           onAdvancedFiltersChange={handleAdvancedFiltersChange}
-          resultCount={filteredAndSortedWorkOrders.length}
+          resultCount={safeFilteredWorkOrders.length}
         />
 
         {/* Error Message */}
@@ -224,7 +253,7 @@ const WorkOrderPortal = () => {
         )}
 
         {/* Work Orders Grid */}
-        {filteredAndSortedWorkOrders.length === 0 ? (
+        {safeFilteredWorkOrders.length === 0 ? (
           <Paper
             elevation={2}
             sx={{
@@ -232,7 +261,9 @@ const WorkOrderPortal = () => {
               py: 8,
               px: 4,
               borderRadius: 3,
-              bgcolor: 'background.paper'
+              bgcolor: 'background.paper',
+              maxWidth: 'xl',
+              mx: 'auto'
             }}
           >
             <AssignmentIcon
@@ -255,11 +286,11 @@ const WorkOrderPortal = () => {
           </Paper>
         ) : (
           <Grid container spacing={3}>
-            {(optimizedOrder
-              ? optimizedOrder.map(idx => filteredAndSortedWorkOrders[idx])
-              : filteredAndSortedWorkOrders
+            {(optimizedOrder && safeFilteredWorkOrders.length > 0
+              ? optimizedOrder.map(idx => safeFilteredWorkOrders[idx]).filter(Boolean)
+              : safeFilteredWorkOrders
             ).map((workOrder) => (
-              <Grid item xs={12} key={workOrder.uuid}>
+              <Grid size={12} key={workOrder.uuid}>
                 <WorkOrderCard
                   workOrder={workOrder}
                   onViewDetails={handleViewDetails}
@@ -280,6 +311,13 @@ const WorkOrderPortal = () => {
         }}
         workOrder={selectedWorkOrder}
         onSave={handleSaveWorkOrder}
+      />
+
+      {/* Schedule Notification */}
+      <ScheduleNotification
+        open={scheduleNotificationOpen}
+        onClose={() => setScheduleNotificationOpen(false)}
+        scheduledDate={scheduledDateText}
       />
 
     </Box>

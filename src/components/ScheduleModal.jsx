@@ -15,7 +15,13 @@ const ScheduleModal = ({ open, onClose, onSubmit }) => {
   }, [open]);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xs"
+      fullWidth
+      onClick={(e) => e.stopPropagation()}
+    >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         Schedule Work
         <IconButton onClick={onClose} size="small">
@@ -30,6 +36,7 @@ const ScheduleModal = ({ open, onClose, onSubmit }) => {
             type="date"
             value={date}
             onChange={e => setDate(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             slotProps={{ inputLabel: { shrink: true } }}
             autoFocus
           />

@@ -1,58 +1,89 @@
 import {
-    Close as CloseIcon,
-    ExpandMore as ExpandMoreIcon,
-    History as HistoryIcon,
-    Save as SaveIcon
+  Add as AddIcon,
+  Close as CloseIcon,
+  ExpandMore as ExpandMoreIcon,
+  History as HistoryIcon,
+  Save as SaveIcon
 } from '@mui/icons-material';
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Alert,
-    Box,
-    Button,
-    Chip,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    Grid,
-    IconButton,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField,
-    Typography
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
+  Autocomplete,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { formatDate, getStatusColor, isPending } from '../utils/dateUtils';
+import { formatDate } from '../utils/dateUtils';
 import ActivityDetailsModal from './ActivityDetailsModal';
+import ContactEditItem from './ContactEditItem';
 
 const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [activityModalOpen, setActivityModalOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [expandedContacts, setExpandedContacts] = useState(new Set());
   const [formData, setFormData] = useState({
     name: workOrder?.name || '',
     description: workOrder?.description || '',
     address: workOrder?.address || '',
     frequency: workOrder?.schedule?.frequency || '',
-    dayOfWeek: workOrder?.schedule?.dayOfWeek || '',
-    nextDue: workOrder?.schedule?.nextDue || ''
+    restrictions: [],
+    contacts: workOrder?.contacts || []
   });
 
+  // Available restriction options
+  const restrictionOptions = [
+    { value: 'monday', label: 'Monday' },
+    { value: 'tuesday', label: 'Tuesday' },
+    { value: 'wednesday', label: 'Wednesday' },
+    { value: 'thursday', label: 'Thursday' },
+    { value: 'friday', label: 'Friday' },
+    { value: 'saturday', label: 'Saturday' },
+    { value: 'sunday', label: 'Sunday' },
+    { value: 'morning_hours', label: 'Morning Hours' },
+    { value: 'afternoon_hours', label: 'Afternoon Hours' },
+    { value: 'business_hours', label: 'Business Hours' }
+  ];
+
   useEffect(() => {
-    setFormData({
-      name: workOrder?.name || '',
-      description: workOrder?.description || '',
-      address: workOrder?.address || '',
-      frequency: workOrder?.schedule?.frequency || '',
-      dayOfWeek: workOrder?.schedule?.dayOfWeek || '',
-      nextDue: workOrder?.schedule?.nextDue || ''
-    });
+    if (workOrder) {
+      // Convert restrictions object to array for multi-select
+      const activeRestrictions = [];
+      if (workOrder.schedule?.restrictions) {
+        Object.entries(workOrder.schedule.restrictions).forEach(([key, value]) => {
+          if (value && key !== 'weekends' && key !== 'weekdays') {
+            activeRestrictions.push(key);
+          }
+        });
+      }
+
+      setFormData({
+        name: workOrder.name || '',
+        description: workOrder.description || '',
+        address: workOrder.address || '',
+        frequency: workOrder.schedule?.frequency || '',
+        restrictions: activeRestrictions,
+        contacts: workOrder.contacts ? [...workOrder.contacts] : []
+      });
+    }
     setIsEditing(false);
+    setExpandedContacts(new Set());
   }, [workOrder, open]);
 
   const handleInputChange = (field, value) => {
@@ -64,20 +95,49 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
 
   const handleSave = () => {
     if (onSave) {
+      // Convert restrictions array back to object format
+      const restrictionsObject = {
+        weekends: false,
+        weekdays: false,
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        morning_hours: false,
+        afternoon_hours: false,
+        business_hours: false
+      };
+
+      // Set active restrictions
+      formData.restrictions.forEach(restriction => {
+        restrictionsObject[restriction] = true;
+      });
+
+      // Auto-calculate weekends and weekdays
+      const weekdayRestrictions = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+      const weekendRestrictions = ['saturday', 'sunday'];
+
+      restrictionsObject.weekdays = weekdayRestrictions.some(day => restrictionsObject[day]);
+      restrictionsObject.weekends = weekendRestrictions.some(day => restrictionsObject[day]);
+
       onSave({
         ...workOrder,
         name: formData.name,
         description: formData.description,
         address: formData.address,
+        contacts: formData.contacts,
         schedule: {
           ...workOrder.schedule,
           frequency: formData.frequency,
-          dayOfWeek: formData.dayOfWeek,
-          nextDue: formData.nextDue
+          restrictions: restrictionsObject
         }
       });
     }
     setIsEditing(false);
+    setExpandedContacts(new Set());
   };
 
   const handleActivityEdit = (activity) => {
@@ -106,22 +166,116 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
   };
 
   const handleCancel = () => {
-    setFormData({
-      name: workOrder?.name || '',
-      description: workOrder?.description || '',
-      address: workOrder?.address || '',
-      frequency: workOrder?.schedule?.frequency || '',
-      dayOfWeek: workOrder?.schedule?.dayOfWeek || '',
-      nextDue: workOrder?.schedule?.nextDue || ''
-    });
+    if (workOrder) {
+      // Convert restrictions object to array for multi-select
+      const activeRestrictions = [];
+      if (workOrder.schedule?.restrictions) {
+        Object.entries(workOrder.schedule.restrictions).forEach(([key, value]) => {
+          if (value && key !== 'weekends' && key !== 'weekdays') {
+            activeRestrictions.push(key);
+          }
+        });
+      }
+
+      setFormData({
+        name: workOrder.name || '',
+        description: workOrder.description || '',
+        address: workOrder.address || '',
+        frequency: workOrder.schedule?.frequency || '',
+        restrictions: activeRestrictions,
+        contacts: workOrder.contacts ? [...workOrder.contacts] : []
+      });
+    }
     setIsEditing(false);
+    setExpandedContacts(new Set());
+  };
+
+  const handleRemoveContact = (indexToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      contacts: prev.contacts.filter((_, index) => index !== indexToRemove)
+    }));
+  };
+
+  const handleAddContact = () => {
+    const newContact = {
+      name: '',
+      email: '',
+      phones: [{ type: 'mobile', phone: '', 'sms-enabled': true, primary: true }],
+      notes: '',
+      preference: 'voice',
+      primary: formData.contacts.length === 0
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      contacts: [...prev.contacts, newContact]
+    }));
+  };
+
+  const handleContactChange = (index, field, value) => {
+    setFormData(prev => {
+      const newContacts = [...prev.contacts];
+      newContacts[index] = { ...newContacts[index], [field]: value };
+      return { ...prev, contacts: newContacts };
+    });
+  };
+
+  const handlePhoneChange = (contactIndex, phoneIndex, field, value) => {
+    setFormData(prev => {
+      const newContacts = [...prev.contacts];
+      const newPhones = [...newContacts[contactIndex].phones];
+      newPhones[phoneIndex] = { ...newPhones[phoneIndex], [field]: value };
+      newContacts[contactIndex] = { ...newContacts[contactIndex], phones: newPhones };
+      return { ...prev, contacts: newContacts };
+    });
+  };
+
+  const handleAddPhone = (contactIndex) => {
+    setFormData(prev => {
+      const newContacts = [...prev.contacts];
+      const newPhone = { type: 'mobile', phone: '', 'sms-enabled': false, primary: false };
+      newContacts[contactIndex] = {
+        ...newContacts[contactIndex],
+        phones: [...newContacts[contactIndex].phones, newPhone]
+      };
+      return { ...prev, contacts: newContacts };
+    });
+  };
+
+  const handleRemovePhone = (contactIndex, phoneIndex) => {
+    setFormData(prev => {
+      const newContacts = [...prev.contacts];
+      const newPhones = newContacts[contactIndex].phones.filter((_, i) => i !== phoneIndex);
+      newContacts[contactIndex] = { ...newContacts[contactIndex], phones: newPhones };
+      return { ...prev, contacts: newContacts };
+    });
+  };
+
+  const handleSetPrimaryContact = (contactIndex) => {
+    setFormData(prev => {
+      const newContacts = prev.contacts.map((contact, i) => ({
+        ...contact,
+        primary: i === contactIndex
+      }));
+      return { ...prev, contacts: newContacts };
+    });
+  };
+
+  const toggleContactExpanded = (contactIndex) => {
+    setExpandedContacts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(contactIndex)) {
+        newSet.delete(contactIndex);
+      } else {
+        newSet.add(contactIndex);
+      }
+      return newSet;
+    });
   };
 
 
   if (!workOrder) return null;
-
-  const nextDueDate = workOrder.schedule?.nextDue;
-  const statusColor = getStatusColor(nextDueDate);
 
   return (
     <Dialog
@@ -151,126 +305,147 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
       </DialogTitle>
 
       <DialogContent sx={{ pb: 2 }}>
-        <Grid container spacing={3}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           {/* Basic Information */}
-          <Grid item xs={12}>
+          <Box>
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
               Basic Information
             </Typography>
 
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Work Order Name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  disabled={!isEditing}
-                  sx={{ mb: 2 }}
-                />
-              </Grid>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                fullWidth
+                label="Work Order Name"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                disabled={!isEditing}
+              />
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Description"
-                  multiline
-                  rows={3}
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  disabled={!isEditing}
-                  sx={{ mb: 2 }}
-                />
-              </Grid>
+              <TextField
+                fullWidth
+                label="Description"
+                multiline
+                rows={3}
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                disabled={!isEditing}
+              />
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Address"
-                  value={formData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  disabled={!isEditing}
-                  sx={{ mb: 2 }}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
+              <TextField
+                fullWidth
+                label="Address"
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                disabled={!isEditing}
+              />
+            </Box>
+          </Box>
 
-          {/* Schedule Cadence Information */}
-          <Grid item xs={12}>
+          {/* Contacts */}
+          <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Contacts ({formData.contacts.length})
+              </Typography>
+              {isEditing && (
+                <Button
+                  startIcon={<AddIcon />}
+                  onClick={handleAddContact}
+                  size="small"
+                  variant="outlined"
+                  sx={{ textTransform: 'none' }}
+                >
+                  Add Contact
+                </Button>
+              )}
+            </Box>
+
+            {formData.contacts.length > 0 ? (
+              <Box sx={{ bgcolor: 'grey.50', borderRadius: 1 }}>
+                {formData.contacts.map((contact, index) => (
+                  <Box key={contact.email || contact.name || `contact-${contact.phones?.[0]?.phone || index}`}>
+                    <ContactEditItem
+                      contact={contact}
+                      contactIndex={index}
+                      isEditing={isEditing}
+                      isExpanded={expandedContacts.has(index)}
+                      onToggleExpanded={() => toggleContactExpanded(index)}
+                      onContactChange={handleContactChange}
+                      onPhoneChange={handlePhoneChange}
+                      onAddPhone={handleAddPhone}
+                      onRemovePhone={handleRemovePhone}
+                      onSetPrimary={handleSetPrimaryContact}
+                      onRemove={handleRemoveContact}
+                    />
+                    {index < formData.contacts.length - 1 && (
+                      <Box sx={{ borderBottom: '1px solid', borderColor: 'divider' }} />
+                    )}
+                  </Box>
+                ))}
+              </Box>
+            ) : (
+              <Paper sx={{ p: 3, textAlign: 'center', bgcolor: 'grey.50' }}>
+                <Typography variant="body2" color="text.secondary">
+                  No contacts added yet
+                </Typography>
+              </Paper>
+            )}
+          </Box>
+
+          {/* Scheduling Information */}
+          <Box>
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-              Cadence
+              Scheduling
             </Typography>
 
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth disabled={!isEditing}>
-                  <InputLabel>Frequency</InputLabel>
-                  <Select
-                    value={formData.frequency}
-                    label="Frequency"
-                    onChange={(e) => handleInputChange('frequency', e.target.value)}
-                  >
-                    <MenuItem value="weekly">Weekly</MenuItem>
-                    <MenuItem value="monthly">Monthly</MenuItem>
-                    <MenuItem value="quarterly">Quarterly</MenuItem>
-                    <MenuItem value="yearly">Yearly</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <FormControl fullWidth disabled={!isEditing}>
+                <InputLabel>Frequency</InputLabel>
+                <Select
+                  value={formData.frequency}
+                  label="Frequency"
+                  onChange={(e) => handleInputChange('frequency', e.target.value)}
+                >
+                  <MenuItem value="weekly">Weekly</MenuItem>
+                  <MenuItem value="monthly">Monthly</MenuItem>
+                  <MenuItem value="quarterly">Quarterly</MenuItem>
+                  <MenuItem value="yearly">Yearly</MenuItem>
+                </Select>
+              </FormControl>
 
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth disabled={!isEditing}>
-                  <InputLabel>Day of Week</InputLabel>
-                  <Select
-                    value={formData.dayOfWeek}
-                    label="Day of Week"
-                    onChange={(e) => handleInputChange('dayOfWeek', e.target.value)}
-                  >
-                    <MenuItem value="monday">Monday</MenuItem>
-                    <MenuItem value="tuesday">Tuesday</MenuItem>
-                    <MenuItem value="wednesday">Wednesday</MenuItem>
-                    <MenuItem value="thursday">Thursday</MenuItem>
-                    <MenuItem value="friday">Friday</MenuItem>
-                    <MenuItem value="saturday">Saturday</MenuItem>
-                    <MenuItem value="sunday">Sunday</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Next Due Date"
-                  type="datetime-local"
-                  value={formData.nextDue ? new Date(formData.nextDue).toISOString().slice(0, 16) : ''}
-                  onChange={(e) => handleInputChange('nextDue', e.target.value ? new Date(e.target.value).toISOString() : '')}
+              <Box>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>
+                  Restrictions
+                </Typography>
+                <Autocomplete
+                  multiple
+                  value={formData.restrictions}
+                  onChange={(event, newValue) => handleInputChange('restrictions', newValue)}
+                  options={restrictionOptions.map(option => option.value)}
+                  getOptionLabel={(option) => restrictionOptions.find(r => r.value === option)?.label || option}
                   disabled={!isEditing}
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder={formData.restrictions.length === 0 ? "Select restrictions..." : ""}
+                      variant="outlined"
+                    />
+                  )}
+                  sx={{
+                    '& .MuiAutocomplete-tag': {
+                      margin: '2px'
                     }
                   }}
                 />
-              </Grid>
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                  Select days and time windows when work can be scheduled
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
 
-              <Grid item xs={12} md={6}>
-                <Box sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
-                    Status:
-                  </Typography>
-                  <Chip
-                    label={isPending(nextDueDate) ? 'Pending' : formatDate(nextDueDate)}
-                    color={statusColor}
-                    size="small"
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </Grid>
-
-          {/* Activity */}
-          <Grid item xs={12}>
+          {/* Activity - Full Width */}
+          <Box sx={{ width: '100%' }}>
             <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -291,7 +466,7 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
                   </Typography>
                 </Box>
               </AccordionSummary>
-              <AccordionDetails sx={{ px: 0 }}>
+              <AccordionDetails sx={{ p: 0, width: '100%' }}>
                 {workOrder.activity && workOrder.activity.length > 0 ? (
                   <Box sx={{ width: '100%' }}>
                     {workOrder.activity.map((activity, index) => (
@@ -317,15 +492,17 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
                             {formatDate(activity.date)}
                           </Typography>
                           <Chip
-                            label={
-                              activity.status === 'complete' ? 'Complete' :
-                              activity.status === 'canceled' ? 'Canceled' : 'Incomplete'
-                            }
+                            label={(() => {
+                              if (activity.status === 'complete') return 'Complete';
+                              if (activity.status === 'canceled') return 'Canceled';
+                              return 'Incomplete';
+                            })()}
                             size="small"
-                            color={
-                              activity.status === 'complete' ? 'success' :
-                              activity.status === 'canceled' ? 'error' : 'warning'
-                            }
+                            color={(() => {
+                              if (activity.status === 'complete') return 'success';
+                              if (activity.status === 'canceled') return 'error';
+                              return 'warning';
+                            })()}
                             sx={{ fontWeight: 600 }}
                           />
                         </Box>
@@ -353,14 +530,14 @@ const WorkOrderDetailsModal = ({ open, onClose, workOrder, onSave }) => {
                     ))}
                   </Box>
                 ) : (
-                  <Alert severity="info" sx={{ borderRadius: 2, mx: 3 }}>
+                  <Alert severity="info" sx={{ borderRadius: 2, m: 3 }}>
                     No activity available for this work order.
                   </Alert>
                 )}
               </AccordionDetails>
             </Accordion>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>

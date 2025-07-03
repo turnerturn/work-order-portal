@@ -106,6 +106,7 @@ const RouteOptimizationModal = ({
           // Optional: You could reverse geocode to get a human-readable address
           // but coordinates work fine for the Directions API
         } catch (err) {
+          console.error('Error processing location:', err);
           setError('Unable to process your location. Please enter manually.');
           setIsLoadingLocation(false);
         }
@@ -180,6 +181,11 @@ const RouteOptimizationModal = ({
       <DialogContent sx={{ pb: 2 }}>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
           Enter your starting location to optimize the route for {workOrdersToOptimize} work orders. The system will calculate the most efficient travel path.
+          {workOrdersToOptimize > 23 && (
+            <span style={{ color: '#f57c00', fontWeight: 500 }}>
+              {' '}Note: Only the first 23 work orders can be optimized due to routing service limitations.
+            </span>
+          )}
         </Typography>
 
         <Box sx={{ mb: 3 }}>

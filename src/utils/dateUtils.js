@@ -209,3 +209,66 @@ export const getSuggestedNextScheduleDate = (workOrder) => {
     return 'Unable to calculate';
   }
 };
+
+// Check if a work order is overdue based on its frequency and activity history
+export const isWorkOrderOverdue = (workOrder) => {
+  // No activity means overdue
+  if (!workOrder.activity || workOrder.activity.length === 0) {
+    return true;
+  }
+
+  // No completed activities means overdue
+  const completedActivities = workOrder.activity.filter(activity => activity.status === 'completed');
+  if (completedActivities.length === 0) {
+    return true;
+  }
+
+  // Get the most recent completed activity
+  const lastCompleted = completedActivities
+    .map(activity => parseISO(activity.date))
+    .sort((a, b) => b - a)[0];
+
+  const now = new Date();
+  let intervalDays = 0;
+
+  // Determine interval based on frequency
+  switch (workOrder.schedule?.frequency) {
+    case 'daily': intervalDays = 1; break;
+    case 'weekly': intervalDays = 7; break;
+    case 'bi-weekly': intervalDays = 14; break;
+    case 'monthly': intervalDays = 30; break;
+    case 'quarterly': intervalDays = 90; break;
+    case 'annually': intervalDays = 365; break;
+    default: intervalDays = 7; // Default to weekly
+  }
+
+  const daysSinceLastCompleted = (now - lastCompleted) / (1000 * 60 * 60 * 24);
+  return daysSinceLastCompleted > intervalDays;
+};
+
+// Check if a work order has upcoming activities scheduled in the next 2 weeks
+export const isUpcomingInTwoWeeks = (workOrder) => {
+  try {
+    if (!workOrder.activity || workOrder.activity.length === 0) {
+      return false;
+    }
+
+    const now = new Date();
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+
+    // Check if there are any incomplete activities scheduled in the next 2 weeks
+    return workOrder.activity.some(activity => {
+      if (activity.status === 'completed') return false;
+
+      try {
+        const activityDate = parseISO(activity.date);
+        return activityDate >= now && activityDate <= twoWeeksFromNow;
+      } catch {
+        return false;
+      }
+    });
+  } catch {
+    return false;
+  }
+};

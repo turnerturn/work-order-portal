@@ -1,178 +1,1534 @@
 [
   {
-    "uuid": "wo-001",
-    "name": "HVAC Maintenance",
-    "description": "Quarterly HVAC system inspection and filter replacement",
-    "address": "9239 Metcalf Ave, Overland Park, KS 66212",
-    "created-date": "2024-12-15T10:30:00Z",
+    "uuid": "wo-g27o5stkb",
+    "name": "Weekly Pool Cleaning - Southwest",
+    "description": "Complete pool cleaning service including skimming, vacuuming, and chemical balancing",
+    "address": "5789 W 71st St, Tulsa, OK 74131",
+    "created-date": "2025-06-02T23:24:55.558Z",
     "activity": [
       {
-        "id": "act-001",
-        "type": "inspection",
-        "date": "2024-12-01T14:00:00Z",
-        "technician": "John Smith",
-        "notes": "System running normally, replaced filters",
+        "id": "act-y3jw5s",
+        "type": "chemical_treatment",
+        "date": "2025-06-22T09:12:14.129Z",
+        "technician": "David Rodriguez",
+        "notes": "Chemical shock treatment applied, algae cleared. Filter backwashed.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Daniel Young",
+        "email": "daniel725@gmail.com",
+        "phones": [
+          {
+            "type": "home",
+            "phone": "(955) 583-1496",
+            "sms-enabled": false,
+            "primary": true
+          }
+        ],
+        "notes": "Evening calls only after 6 PM",
+        "preference": "voice",
+        "primary": true
+      }
+    ],
+    "schedule": {
+      "frequency": "weekly",
+      "restrictions": {
+        "weekends": true,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "morning_hours": false,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-j6cjujsah",
+    "name": "Pool Opening Service - Red Fork",
+    "description": "Seasonal pool opening, equipment startup, and initial cleaning",
+    "address": "2468 W 61st St, Tulsa, OK 74132",
+    "created-date": "2025-06-01T23:38:30.170Z",
+    "activity": [],
+    "contacts": [
+      {
+        "name": "Tyler Mitchell",
+        "email": "tylermitchell@email.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(624) 330-8876",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "home",
+            "phone": "(282) 398-1392",
+            "sms-enabled": true,
+            "primary": false
+          },
+          {
+            "type": "mobile",
+            "phone": "(937) 360-9005",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Email for non-urgent matters",
+        "preference": "sms",
+        "primary": true
+      }
+    ],
+    "schedule": {
+      "frequency": "annually",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "morning_hours": false,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-f8pdgrobf",
+    "name": "Quarterly Deep Clean - Broken Arrow",
+    "description": "Deep cleaning service including tile scrubbing, acid wash, and equipment overhaul",
+    "address": "8024 S Garnett Rd, Tulsa, OK 74137",
+    "created-date": "2025-05-30T11:23:01.679Z",
+    "activity": [
+      {
+        "id": "act-u1uszu",
+        "type": "repair",
+        "date": "2025-06-12T05:36:44.663Z",
+        "technician": "Tyler Brooks",
+        "notes": "Removed large amount of leaves, checked skimmer baskets. Pool ready for use.",
         "status": "completed"
       },
       {
-        "id": "act-002",
-        "type": "maintenance",
-        "date": "2024-09-01T09:30:00Z",
-        "technician": "Mike Johnson",
-        "notes": "Cleaned coils and checked refrigerant levels",
+        "id": "act-gwu432",
+        "type": "cleaning",
+        "date": "2025-05-09T11:17:15.984Z",
+        "technician": "Ryan Kelly",
+        "notes": "Deep cleaning completed, tiles scrubbed, water crystal clear.",
         "status": "completed"
       }
     ],
+    "contacts": [
+      {
+        "name": "Ashley Lopez",
+        "email": "ashley.lopez@gmail.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(536) 605-0551",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "work",
+            "phone": "(566) 374-5075",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Text messages preferred",
+        "preference": "voice",
+        "primary": true
+      },
+      {
+        "name": "Sarah Johnson",
+        "email": "sarah118@gmail.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(921) 278-8830",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "office",
+            "phone": "(460) 806-1554",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "sms",
+        "primary": false
+      },
+      {
+        "name": "James Garcia",
+        "email": "james.garcia@outlook.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(708) 525-5936",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "office",
+            "phone": "(348) 412-8820",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "sms",
+        "primary": false
+      }
+    ],
     "schedule": {
-      "cron": "0 0 1 */3 *",
       "frequency": "quarterly",
-      "nextDue": "2025-06-25T10:00:00Z",
-      "dayOfWeek": "monday",
-      "restrictions": ["no_weekends", "business_hours"]
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "morning_hours": false,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
     }
   },
   {
-    "uuid": "wo-006",
-    "name": "Fire Alarm Testing",
-    "description": "Weekly fire alarm system testing and inspection",
-    "address": "1234 Business Blvd, Kansas City, MO 64108",
-    "created-date": "2024-09-01T07:00:00Z",
+    "uuid": "wo-90cmka4i1",
+    "name": "Bi-Weekly Pool Maintenance - Bixby",
+    "description": "Pool cleaning, filter check, and equipment inspection",
+    "address": "8945 S Memorial Dr, Tulsa, OK 74133",
+    "created-date": "2025-05-28T02:56:06.642Z",
+    "activity": [],
+    "contacts": [
+      {
+        "name": "Kimberly Baker",
+        "email": "kimberlybaker@email.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(847) 991-9232",
+            "sms-enabled": true,
+            "primary": true
+          }
+        ],
+        "notes": "Email for non-urgent matters",
+        "preference": "voice",
+        "primary": true
+      }
+    ],
+    "schedule": {
+      "frequency": "bi-weekly",
+      "restrictions": {
+        "weekends": true,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "morning_hours": true,
+        "afternoon_hours": false,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-qaal11ziv",
+    "name": "Filter Replacement - Cherry Street",
+    "description": "Replace pool filter cartridges and clean filter housing",
+    "address": "2156 S Harvard Ave, Tulsa, OK 74114",
+    "created-date": "2025-05-16T07:48:20.892Z",
     "activity": [
       {
-        "id": "act-007",
+        "id": "act-9barm5",
+        "type": "cleaning",
+        "date": "2025-06-13T00:26:08.702Z",
+        "technician": "Jessica Martinez",
+        "notes": "Chemical shock treatment applied, algae cleared. Filter backwashed.",
+        "status": "completed"
+      },
+      {
+        "id": "act-av9fnf",
         "type": "testing",
-        "date": "2025-06-15T10:00:00Z",
-        "technician": "Lisa Thompson",
-        "notes": "All alarm panels responding, tested smoke detectors in zones 1-4",
+        "date": "2025-05-18T16:42:52.361Z",
+        "technician": "Tyler Brooks",
+        "notes": "Removed large amount of leaves, checked skimmer baskets. Pool ready for use.",
         "status": "completed"
       }
     ],
-    "schedule": {
-      "cron": "0 0 * * 1",
-      "frequency": "weekly",
-      "nextDue": "2025-07-03T10:00:00Z",
-      "dayOfWeek": "monday",
-      "restrictions": ["business_hours"]
-    }
-  },
-  {
-    "uuid": "wo-002",
-    "name": "Equipment Calibration",
-    "description": "Monthly calibration of precision measurement equipment",
-    "address": "1470 SE Hamblen Rd, Lee's Summit, MO 64081",
-    "created-date": "2024-11-20T08:15:00Z",
-    "activity": [
+    "contacts": [
       {
-        "id": "act-003",
-        "type": "calibration",
-        "date": "2025-01-01T10:00:00Z",
-        "technician": "Sarah Davis",
-        "notes": "All equipment within tolerance",
-        "status": "completed"
+        "name": "Michelle King",
+        "email": "mking@yahoo.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(999) 954-2330",
+            "sms-enabled": true,
+            "primary": true
+          }
+        ],
+        "notes": "",
+        "preference": "voice",
+        "primary": true
+      },
+      {
+        "name": "Sarah Johnson",
+        "email": "sarahjohnson@yahoo.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(248) 522-7749",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "work",
+            "phone": "(344) 475-5937",
+            "sms-enabled": false,
+            "primary": false
+          },
+          {
+            "type": "home",
+            "phone": "(320) 412-6479",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Check email regularly",
+        "preference": "email",
+        "primary": false
+      },
+      {
+        "name": "Emily Martinez",
+        "email": "emartinez@email.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(660) 628-0336",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "mobile",
+            "phone": "(413) 675-2939",
+            "sms-enabled": false,
+            "primary": false
+          },
+          {
+            "type": "work",
+            "phone": "(341) 317-0061",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "voice",
+        "primary": false
       }
     ],
     "schedule": {
-      "cron": "0 0 1 * *",
       "frequency": "monthly",
-      "nextDue": "2025-06-28T10:00:00Z",
-      "dayOfWeek": "first_monday",
-      "restrictions": ["business_hours"]
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "morning_hours": false,
+        "afternoon_hours": false,
+        "business_hours": true
+      }
     }
   },
   {
-    "uuid": "wo-003",
-    "name": "Safety Inspection",
-    "description": "Annual safety equipment inspection and testing",
-    "address": "123 Main St, Kansas City, MO 64111",
-    "created-date": "2024-01-10T12:00:00Z",
+    "uuid": "wo-04rpkhf7z",
+    "name": "Monthly Equipment Service - Utica Square",
+    "description": "Monthly pool equipment maintenance, pump service, and chemical system check",
+    "address": "3691 E 51st St, Tulsa, OK 74135",
+    "created-date": "2025-05-10T10:43:23.952Z",
     "activity": [
       {
-        "id": "act-004",
+        "id": "act-u989nn",
+        "type": "chemical_treatment",
+        "date": "2025-06-29T04:03:10.445Z",
+        "technician": "Amanda Thompson",
+        "notes": "Performed equipment inspection, all pumps operating normally. Chlorine added.",
+        "status": "completed"
+      },
+      {
+        "id": "act-wwo2nu",
         "type": "inspection",
-        "date": "2024-12-15T13:30:00Z",
-        "technician": "Robert Wilson",
-        "notes": "Fire extinguishers recharged, emergency exits clear",
+        "date": "2025-04-30T16:44:13.077Z",
+        "technician": "Mike Johnson",
+        "notes": "Weekly maintenance completed, tested all equipment. Water quality excellent.",
         "status": "completed"
       }
     ],
-    "schedule": {
-      "cron": "0 0 15 12 *",
-      "frequency": "annually",
-      "nextDue": "2025-12-15T10:00:00Z",
-      "dayOfWeek": "any",
-      "restrictions": ["business_hours"]
-    }
-  },
-  {
-    "uuid": "wo-004",
-    "name": "Filter Replacement",
-    "description": "Replace air filters in main building HVAC system",
-    "address": "500 Corporate Dr, Lenexa, KS 66219",
-    "created-date": "2024-11-01T08:00:00Z",
-    "activity": [
+    "contacts": [
       {
-        "id": "act-005",
-        "type": "maintenance",
-        "date": "2025-03-15T11:00:00Z",
-        "technician": "Alex Chen",
-        "notes": "Replaced all filters, system airflow improved",
-        "status": "completed"
+        "name": "Tyler Mitchell",
+        "email": "tyler528@gmail.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(516) 293-1420",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "home",
+            "phone": "(229) 640-7346",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Available weekends",
+        "preference": "sms",
+        "primary": true
       }
     ],
     "schedule": {
-      "cron": "0 0 15 */2 *",
-      "frequency": "bi-monthly",
-      "nextDue": "2025-06-28T10:00:00Z",
-      "dayOfWeek": "any",
-      "restrictions": ["business_hours"]
-    }
-  },
-  {
-    "uuid": "wo-005",
-    "name": "Generator Testing",
-    "description": "Monthly backup generator load testing and fuel level check",
-    "address": "2500 Corporate Woods, Overland Park, KS 66211",
-    "created-date": "2024-10-05T09:00:00Z",
-    "activity": [
-      {
-        "id": "act-006",
-        "type": "testing",
-        "date": "2025-05-28T14:00:00Z",
-        "technician": "David Rodriguez",
-        "notes": "Generator ran for 30 minutes under load, all systems normal",
-        "status": "completed"
-      }
-    ],
-    "schedule": {
-      "cron": "0 0 28 * *",
       "frequency": "monthly",
-      "nextDue": "2025-06-28T14:00:00Z",
-      "dayOfWeek": "any",
-      "restrictions": ["business_hours"]
+      "restrictions": {
+        "weekends": true,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": false,
+        "morning_hours": true,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
     }
   },
   {
-    "uuid": "wo-007",
-    "name": "Pest Control",
-    "description": "Quarterly pest control treatment for entire facility",
-    "address": "3000 College Blvd, Overland Park, KS 66211",
-    "created-date": "2024-08-15T10:00:00Z",
+    "uuid": "wo-lre3mfsy1",
+    "name": "Chemical Balance Treatment - Eastside",
+    "description": "Test and adjust pool water chemistry, shock treatment if needed",
+    "address": "1357 S Sheridan Rd, Tulsa, OK 74112",
+    "created-date": "2025-05-05T02:43:51.393Z",
     "activity": [
       {
-        "id": "act-008",
-        "type": "treatment",
-        "date": "2025-06-01T09:00:00Z",
-        "technician": "Emily White",
-        "notes": "Applied treatment in all areas, no issues reported",
+        "id": "act-0zhq0n",
+        "type": "cleaning",
+        "date": "2025-06-08T15:51:06.784Z",
+        "technician": "David Rodriguez",
+        "notes": "Filter cartridges replaced, system running efficiently. pH adjusted to 7.4.",
+        "status": "completed"
+      },
+      {
+        "id": "act-yt6hrn",
+        "type": "repair",
+        "date": "2025-04-09T09:57:31.029Z",
+        "technician": "Jessica Martinez",
+        "notes": "Filter cartridges replaced, system running efficiently. pH adjusted to 7.4.",
         "status": "completed"
       }
     ],
+    "contacts": [
+      {
+        "name": "Kimberly Baker",
+        "email": "kimberlybaker@yahoo.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(768) 208-3276",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "office",
+            "phone": "(813) 703-9293",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "voice",
+        "primary": true
+      }
+    ],
     "schedule": {
-      "cron": "0 0 1 */3 *",
+      "frequency": "weekly",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "morning_hours": false,
+        "afternoon_hours": true,
+        "business_hours": false
+      }
+    }
+  },
+  {
+    "uuid": "wo-fuja7gmcx",
+    "name": "Weekly Pool Cleaning - Southwest Tulsa",
+    "description": "Complete pool cleaning service including skimming, vacuuming, and chemical balancing",
+    "address": "4321 W 91st St, Tulsa, OK 74132",
+    "created-date": "2025-05-04T10:29:31.808Z",
+    "activity": [
+      {
+        "id": "act-g1ofsz",
+        "type": "filter_service",
+        "date": "2025-06-17T21:49:37.900Z",
+        "technician": "Jessica Martinez",
+        "notes": "Pump motor serviced, impeller cleaned. System pressure normalized.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Michael Brown",
+        "email": "michael.brown@hotmail.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(552) 840-4396",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "home",
+            "phone": "(903) 648-1763",
+            "sms-enabled": true,
+            "primary": false
+          },
+          {
+            "type": "mobile",
+            "phone": "(842) 559-0642",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "email",
+        "primary": true
+      },
+      {
+        "name": "James Garcia",
+        "email": "jamesgarcia@email.com",
+        "phones": [
+          {
+            "type": "home",
+            "phone": "(526) 366-6208",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "mobile",
+            "phone": "(303) 717-0243",
+            "sms-enabled": false,
+            "primary": false
+          },
+          {
+            "type": "office",
+            "phone": "(421) 943-7723",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Do not call during business hours",
+        "preference": "email",
+        "primary": false
+      }
+    ],
+    "schedule": {
+      "frequency": "weekly",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": true,
+        "morning_hours": true,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-e22wtvaz4",
+    "name": "Monthly Equipment Service - Woodland Hills",
+    "description": "Monthly pool equipment maintenance, pump service, and chemical system check",
+    "address": "6789 E 81st St, Tulsa, OK 74133",
+    "created-date": "2025-04-30T21:25:10.056Z",
+    "activity": [
+      {
+        "id": "act-xnx3yo",
+        "type": "maintenance",
+        "date": "2025-06-07T12:03:02.194Z",
+        "technician": "Lisa Garcia",
+        "notes": "Equipment calibration performed, automated systems functioning properly.",
+        "status": "completed"
+      },
+      {
+        "id": "act-c0ni7o",
+        "type": "inspection",
+        "date": "2025-05-15T01:57:29.351Z",
+        "technician": "Jessica Martinez",
+        "notes": "Deep cleaning completed, tiles scrubbed, water crystal clear.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Nicholas Nelson",
+        "email": "nicholas.nelson@gmail.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(951) 490-8703",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "work",
+            "phone": "(958) 544-4259",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Available weekends",
+        "preference": "email",
+        "primary": true
+      },
+      {
+        "name": "Kimberly Baker",
+        "email": "kimberly.baker@email.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(270) 830-9581",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "work",
+            "phone": "(551) 599-4821",
+            "sms-enabled": true,
+            "primary": false
+          },
+          {
+            "type": "home",
+            "phone": "(366) 509-1584",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "sms",
+        "primary": false
+      },
+      {
+        "name": "Robert Taylor",
+        "email": "roberttaylor@outlook.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(635) 788-8154",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "home",
+            "phone": "(632) 867-7707",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Evening calls only after 6 PM",
+        "preference": "sms",
+        "primary": false
+      }
+    ],
+    "schedule": {
+      "frequency": "monthly",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": false,
+        "morning_hours": false,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-7kxg5frv1",
+    "name": "Quarterly Deep Clean - Brady Arts",
+    "description": "Deep cleaning service including tile scrubbing, acid wash, and equipment overhaul",
+    "address": "2890 S Delaware Ave, Tulsa, OK 74114",
+    "created-date": "2025-04-28T16:49:59.087Z",
+    "activity": [
+      {
+        "id": "act-dy2o7b",
+        "type": "chemical_treatment",
+        "date": "2025-06-08T15:24:12.216Z",
+        "technician": "Ryan Kelly",
+        "notes": "Pool cleaned, skimmed debris, vacuumed bottom. Chemical levels balanced.",
+        "status": "completed"
+      },
+      {
+        "id": "act-fgxq24",
+        "type": "inspection",
+        "date": "2025-06-04T04:57:46.738Z",
+        "technician": "Sarah Davis",
+        "notes": "Seasonal maintenance completed, all systems checked and serviced.",
+        "status": "completed"
+      },
+      {
+        "id": "act-kd3fma",
+        "type": "chemical_treatment",
+        "date": "2025-04-29T09:46:42.406Z",
+        "technician": "Ryan Kelly",
+        "notes": "Pump motor serviced, impeller cleaned. System pressure normalized.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Jessica Davis",
+        "email": "jdavis@email.com",
+        "phones": [
+          {
+            "type": "home",
+            "phone": "(509) 561-5042",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "mobile",
+            "phone": "(542) 449-0571",
+            "sms-enabled": true,
+            "primary": false
+          },
+          {
+            "type": "work",
+            "phone": "(568) 918-4209",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Do not call during business hours",
+        "preference": "email",
+        "primary": true
+      },
+      {
+        "name": "Tyler Mitchell",
+        "email": "tylermitchell@hotmail.com",
+        "phones": [
+          {
+            "type": "home",
+            "phone": "(879) 812-3500",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "mobile",
+            "phone": "(650) 538-6784",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "email",
+        "primary": false
+      },
+      {
+        "name": "Christopher Lee",
+        "email": "clee@gmail.com",
+        "phones": [
+          {
+            "type": "home",
+            "phone": "(328) 546-8029",
+            "sms-enabled": true,
+            "primary": true
+          }
+        ],
+        "notes": "Call between 9 AM - 5 PM only",
+        "preference": "email",
+        "primary": false
+      }
+    ],
+    "schedule": {
       "frequency": "quarterly",
-      "nextDue": null,
-      "dayOfWeek": "first_monday",
-      "restrictions": ["business_hours"]
+      "restrictions": {
+        "weekends": true,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "morning_hours": false,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-t6gbiezfm",
+    "name": "Pool Opening Service - Cherry Street",
+    "description": "Seasonal pool opening, equipment startup, and initial cleaning",
+    "address": "2156 S Harvard Ave, Tulsa, OK 74114",
+    "created-date": "2025-04-18T12:36:18.760Z",
+    "activity": [
+      {
+        "id": "act-5kvyyi",
+        "type": "cleaning",
+        "date": "2025-07-02T12:51:12.791Z",
+        "technician": "Amanda Thompson",
+        "notes": "Seasonal maintenance completed, all systems checked and serviced.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Daniel Young",
+        "email": "daniel317@yahoo.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(213) 809-8877",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "work",
+            "phone": "(535) 548-2845",
+            "sms-enabled": true,
+            "primary": false
+          },
+          {
+            "type": "office",
+            "phone": "(552) 212-6989",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "sms",
+        "primary": true
+      },
+      {
+        "name": "Matthew Hall",
+        "email": "matthew332@gmail.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(698) 805-9243",
+            "sms-enabled": true,
+            "primary": true
+          }
+        ],
+        "notes": "Prefers morning calls",
+        "preference": "email",
+        "primary": false
+      },
+      {
+        "name": "Jessica Davis",
+        "email": "jessica.davis@outlook.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(719) 765-3891",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "home",
+            "phone": "(860) 450-1475",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Check email regularly",
+        "preference": "sms",
+        "primary": false
+      }
+    ],
+    "schedule": {
+      "frequency": "annually",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": true,
+        "friday": true,
+        "morning_hours": false,
+        "afternoon_hours": true,
+        "business_hours": false
+      }
+    }
+  },
+  {
+    "uuid": "wo-1e6svwsv3",
+    "name": "Quarterly Deep Clean - Riverview",
+    "description": "Deep cleaning service including tile scrubbing, acid wash, and equipment overhaul",
+    "address": "5432 S Lewis Ave, Tulsa, OK 74105",
+    "created-date": "2025-04-16T16:21:17.207Z",
+    "activity": [
+      {
+        "id": "act-i62bau",
+        "type": "maintenance",
+        "date": "2025-06-17T08:03:46.232Z",
+        "technician": "Jessica Martinez",
+        "notes": "Filter cartridges replaced, system running efficiently. pH adjusted to 7.4.",
+        "status": "completed"
+      },
+      {
+        "id": "act-gt86g5",
+        "type": "maintenance",
+        "date": "2025-06-02T15:02:25.129Z",
+        "technician": "Sarah Davis",
+        "notes": "Removed large amount of leaves, checked skimmer baskets. Pool ready for use.",
+        "status": "completed"
+      },
+      {
+        "id": "act-ph5utp",
+        "type": "maintenance",
+        "date": "2025-05-13T04:08:58.993Z",
+        "technician": "Tyler Brooks",
+        "notes": "Removed large amount of leaves, checked skimmer baskets. Pool ready for use.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [],
+    "schedule": {
+      "frequency": "quarterly",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": false,
+        "friday": true,
+        "morning_hours": true,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-hiddw495k",
+    "name": "Filter Replacement - Southwest",
+    "description": "Replace pool filter cartridges and clean filter housing",
+    "address": "5789 W 71st St, Tulsa, OK 74131",
+    "created-date": "2025-04-07T16:40:25.802Z",
+    "activity": [
+      {
+        "id": "act-sd60ft",
+        "type": "maintenance",
+        "date": "2025-06-14T16:19:44.357Z",
+        "technician": "Amanda Thompson",
+        "notes": "Pump motor serviced, impeller cleaned. System pressure normalized.",
+        "status": "completed"
+      },
+      {
+        "id": "act-p5qh16",
+        "type": "inspection",
+        "date": "2025-04-26T16:33:22.495Z",
+        "technician": "Tyler Brooks",
+        "notes": "Chemical shock treatment applied, algae cleared. Filter backwashed.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Lauren Carter",
+        "email": "lauren.carter@gmail.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(454) 435-9949",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "work",
+            "phone": "(559) 314-1425",
+            "sms-enabled": true,
+            "primary": false
+          },
+          {
+            "type": "office",
+            "phone": "(348) 991-8708",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "Call between 9 AM - 5 PM only",
+        "preference": "sms",
+        "primary": true
+      },
+      {
+        "name": "Sarah Johnson",
+        "email": "sarah.johnson@outlook.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(722) 388-3090",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "mobile",
+            "phone": "(649) 439-6248",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "Available weekends",
+        "preference": "voice",
+        "primary": false
+      }
+    ],
+    "schedule": {
+      "frequency": "monthly",
+      "restrictions": {
+        "weekends": true,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": false,
+        "friday": false,
+        "morning_hours": false,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-kz2g9dyks",
+    "name": "Quarterly Deep Clean - Red Fork",
+    "description": "Deep cleaning service including tile scrubbing, acid wash, and equipment overhaul",
+    "address": "2468 W 61st St, Tulsa, OK 74132",
+    "created-date": "2025-04-05T03:13:35.179Z",
+    "activity": [
+      {
+        "id": "act-xststn",
+        "type": "repair",
+        "date": "2025-06-18T14:07:02.029Z",
+        "technician": "Sarah Davis",
+        "notes": "Removed large amount of leaves, checked skimmer baskets. Pool ready for use.",
+        "status": "completed"
+      },
+      {
+        "id": "act-moho7s",
+        "type": "repair",
+        "date": "2025-06-14T19:52:47.894Z",
+        "technician": "Jessica Martinez",
+        "notes": "Performed equipment inspection, all pumps operating normally. Chlorine added.",
+        "status": "completed"
+      },
+      {
+        "id": "act-cmq932",
+        "type": "chemical_treatment",
+        "date": "2025-05-07T11:26:36.251Z",
+        "technician": "Tyler Brooks",
+        "notes": "Equipment calibration performed, automated systems functioning properly.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [],
+    "schedule": {
+      "frequency": "quarterly",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": true,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "morning_hours": false,
+        "afternoon_hours": false,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-y6vfcxiok",
+    "name": "Monthly Equipment Service - Woodland Hills",
+    "description": "Monthly pool equipment maintenance, pump service, and chemical system check",
+    "address": "6789 E 81st St, Tulsa, OK 74133",
+    "created-date": "2025-04-04T02:53:58.106Z",
+    "activity": [
+      {
+        "id": "act-8cg3r2",
+        "type": "cleaning",
+        "date": "2025-06-25T02:29:50.173Z",
+        "technician": "Sarah Davis",
+        "notes": "Seasonal maintenance completed, all systems checked and serviced.",
+        "status": "completed"
+      },
+      {
+        "id": "act-k5hlx8",
+        "type": "cleaning",
+        "date": "2025-04-19T05:05:54.499Z",
+        "technician": "Emily Chen",
+        "notes": "Pool cleaned, skimmed debris, vacuumed bottom. Chemical levels balanced.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "James Garcia",
+        "email": "jamesgarcia@outlook.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(377) 779-5277",
+            "sms-enabled": false,
+            "primary": true
+          }
+        ],
+        "notes": "Text messages preferred",
+        "preference": "email",
+        "primary": true
+      },
+      {
+        "name": "Ryan Wright",
+        "email": "ryan.wright@hotmail.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(429) 355-9021",
+            "sms-enabled": false,
+            "primary": true
+          }
+        ],
+        "notes": "Available weekends",
+        "preference": "email",
+        "primary": false
+      },
+      {
+        "name": "Jennifer Allen",
+        "email": "jennifer.allen@hotmail.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(586) 564-5791",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "mobile",
+            "phone": "(387) 390-0605",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "Always available via text",
+        "preference": "sms",
+        "primary": false
+      }
+    ],
+    "schedule": {
+      "frequency": "monthly",
+      "restrictions": {
+        "weekends": true,
+        "weekdays": false,
+        "monday": true,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": false,
+        "morning_hours": true,
+        "afternoon_hours": true,
+        "business_hours": false
+      }
+    }
+  },
+  {
+    "uuid": "wo-q1m4xxq22",
+    "name": "Filter Replacement - Cherry Street",
+    "description": "Replace pool filter cartridges and clean filter housing",
+    "address": "2156 S Harvard Ave, Tulsa, OK 74114",
+    "created-date": "2025-03-27T03:37:34.603Z",
+    "activity": [
+      {
+        "id": "act-0ryl8t",
+        "type": "chemical_treatment",
+        "date": "2025-06-08T23:56:44.342Z",
+        "technician": "Sarah Davis",
+        "notes": "Weekly maintenance completed, tested all equipment. Water quality excellent.",
+        "status": "completed"
+      },
+      {
+        "id": "act-s3gda7",
+        "type": "testing",
+        "date": "2025-05-22T12:09:36.311Z",
+        "technician": "Lisa Garcia",
+        "notes": "Chemical shock treatment applied, algae cleared. Filter backwashed.",
+        "status": "completed"
+      },
+      {
+        "id": "act-wgfnro",
+        "type": "filter_service",
+        "date": "2025-05-01T20:57:56.470Z",
+        "technician": "Ryan Kelly",
+        "notes": "Deep cleaning completed, tiles scrubbed, water crystal clear.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [],
+    "schedule": {
+      "frequency": "monthly",
+      "restrictions": {
+        "weekends": true,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": true,
+        "friday": true,
+        "morning_hours": false,
+        "afternoon_hours": false,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-ek5zoba0w",
+    "name": "Quarterly Deep Clean - Southeast",
+    "description": "Deep cleaning service including tile scrubbing, acid wash, and equipment overhaul",
+    "address": "6543 S Mingo Rd, Tulsa, OK 74146",
+    "created-date": "2025-03-25T18:07:54.080Z",
+    "activity": [
+      {
+        "id": "act-m7pqxd",
+        "type": "chemical_treatment",
+        "date": "2025-06-28T19:41:02.809Z",
+        "technician": "Amanda Thompson",
+        "notes": "Equipment calibration performed, automated systems functioning properly.",
+        "status": "completed"
+      },
+      {
+        "id": "act-hfeewb",
+        "type": "inspection",
+        "date": "2025-05-27T07:04:27.489Z",
+        "technician": "Chris Wilson",
+        "notes": "Equipment calibration performed, automated systems functioning properly.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Jennifer Allen",
+        "email": "jenniferallen@outlook.com",
+        "phones": [
+          {
+            "type": "home",
+            "phone": "(522) 209-7630",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "office",
+            "phone": "(533) 583-6024",
+            "sms-enabled": false,
+            "primary": false
+          },
+          {
+            "type": "mobile",
+            "phone": "(634) 847-8688",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "sms",
+        "primary": true
+      },
+      {
+        "name": "Daniel Young",
+        "email": "daniel69@yahoo.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(655) 685-9395",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "office",
+            "phone": "(954) 399-0773",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "sms",
+        "primary": false
+      }
+    ],
+    "schedule": {
+      "frequency": "quarterly",
+      "restrictions": {
+        "weekends": true,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": false,
+        "thursday": false,
+        "friday": true,
+        "morning_hours": false,
+        "afternoon_hours": false,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-w4q0aj9o0",
+    "name": "Weekly Pool Cleaning - Broken Arrow",
+    "description": "Complete pool cleaning service including skimming, vacuuming, and chemical balancing",
+    "address": "8024 S Garnett Rd, Tulsa, OK 74137",
+    "created-date": "2025-03-21T19:45:44.714Z",
+    "activity": [
+      {
+        "id": "act-4vax0p",
+        "type": "maintenance",
+        "date": "2025-06-14T00:04:48.339Z",
+        "technician": "Jessica Martinez",
+        "notes": "Pool cleaned, skimmed debris, vacuumed bottom. Chemical levels balanced.",
+        "status": "completed"
+      },
+      {
+        "id": "act-zmtzvr",
+        "type": "equipment_check",
+        "date": "2025-05-02T16:16:29.648Z",
+        "technician": "Sarah Davis",
+        "notes": "Removed large amount of leaves, checked skimmer baskets. Pool ready for use.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Lisa Anderson",
+        "email": "lisaanderson@outlook.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(210) 954-2105",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "work",
+            "phone": "(399) 687-3351",
+            "sms-enabled": true,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "email",
+        "primary": true
+      },
+      {
+        "name": "Lauren Carter",
+        "email": "lcarter@outlook.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(255) 468-4040",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "home",
+            "phone": "(585) 289-3364",
+            "sms-enabled": true,
+            "primary": false
+          },
+          {
+            "type": "mobile",
+            "phone": "(482) 442-9781",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "",
+        "preference": "sms",
+        "primary": false
+      },
+      {
+        "name": "Lisa Anderson",
+        "email": "lisaanderson@email.com",
+        "phones": [
+          {
+            "type": "office",
+            "phone": "(617) 360-0815",
+            "sms-enabled": true,
+            "primary": true
+          },
+          {
+            "type": "work",
+            "phone": "(410) 806-3715",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "Prefers morning calls",
+        "preference": "voice",
+        "primary": false
+      }
+    ],
+    "schedule": {
+      "frequency": "weekly",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": false,
+        "wednesday": true,
+        "thursday": true,
+        "friday": false,
+        "morning_hours": true,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-9a2en7il6",
+    "name": "Bi-Weekly Pool Maintenance - Yale Corridor",
+    "description": "Pool cleaning, filter check, and equipment inspection",
+    "address": "7123 E 91st St, Tulsa, OK 74133",
+    "created-date": "2025-03-07T20:34:42.609Z",
+    "activity": [],
+    "contacts": [
+      {
+        "name": "Kimberly Baker",
+        "email": "kimberlybaker@gmail.com",
+        "phones": [
+          {
+            "type": "mobile",
+            "phone": "(795) 606-6030",
+            "sms-enabled": false,
+            "primary": true
+          }
+        ],
+        "notes": "",
+        "preference": "email",
+        "primary": true
+      }
+    ],
+    "schedule": {
+      "frequency": "bi-weekly",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "morning_hours": true,
+        "afternoon_hours": false,
+        "business_hours": true
+      }
+    }
+  },
+  {
+    "uuid": "wo-09pluktuj",
+    "name": "Pool Opening Service - Eastside",
+    "description": "Seasonal pool opening, equipment startup, and initial cleaning",
+    "address": "1357 S Sheridan Rd, Tulsa, OK 74112",
+    "created-date": "2025-03-05T04:45:50.733Z",
+    "activity": [
+      {
+        "id": "act-y5m6oj",
+        "type": "chemical_treatment",
+        "date": "2025-06-03T21:57:02.275Z",
+        "technician": "David Rodriguez",
+        "notes": "Seasonal maintenance completed, all systems checked and serviced.",
+        "status": "completed"
+      },
+      {
+        "id": "act-lnokyd",
+        "type": "equipment_check",
+        "date": "2025-04-22T21:58:36.269Z",
+        "technician": "Sarah Davis",
+        "notes": "Removed large amount of leaves, checked skimmer baskets. Pool ready for use.",
+        "status": "completed"
+      }
+    ],
+    "contacts": [
+      {
+        "name": "Lisa Anderson",
+        "email": "landerson@email.com",
+        "phones": [
+          {
+            "type": "work",
+            "phone": "(664) 975-7467",
+            "sms-enabled": false,
+            "primary": true
+          },
+          {
+            "type": "home",
+            "phone": "(419) 343-6656",
+            "sms-enabled": false,
+            "primary": false
+          },
+          {
+            "type": "office",
+            "phone": "(478) 890-7511",
+            "sms-enabled": false,
+            "primary": false
+          }
+        ],
+        "notes": "Leave voicemail if no answer",
+        "preference": "voice",
+        "primary": true
+      }
+    ],
+    "schedule": {
+      "frequency": "annually",
+      "restrictions": {
+        "weekends": false,
+        "weekdays": true,
+        "monday": false,
+        "tuesday": true,
+        "wednesday": true,
+        "thursday": true,
+        "friday": true,
+        "morning_hours": true,
+        "afternoon_hours": true,
+        "business_hours": true
+      }
     }
   }
 ]

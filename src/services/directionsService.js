@@ -6,7 +6,7 @@ class DirectionsService {
     // 1. Store the API key securely (environment variables, backend proxy)
     // 2. Use a backend service to make the API calls to avoid exposing the key
     // 3. Implement proper error handling and retry logic
-    this.apiKey = import.meta.env.VITE_GOOGLE_DIRECTIONS_API_KEY || 'API_KEY';
+    this.apiKey = import.meta.env.GOOGLE_DIRECTIONS_API_KEY || 'API_KEY';
     this.baseUrl = 'https://maps.googleapis.com/maps/api/directions/json';
   }
 
@@ -112,27 +112,100 @@ class DirectionsService {
   }
 
   /**
-   * Get work orders scheduled for this week that have valid addresses
-   * @param {Array} workOrders - All work orders
-   * @returns {Array} - Work orders scheduled this week with addresses
+   * Optimize route for filtered work orders (up to 23 waypoints)
+   * @param {string} origin - Starting location
+   * @param {Array} workOrders - Filtered work orders to optimize
+   * @returns {Promise<Array>} - Optimized work orders in new order
    */
-  getWorkOrdersForThisWeek(workOrders) {
-    const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay()); // Start of current week (Sunday)
-    startOfWeek.setHours(0, 0, 0, 0);
+  async optimizeWorkOrderRoute(origin, workOrders) {
+    if (!origin || !workOrders || workOrders.length === 0) {
+      throw new Error('Origin and work orders are required');
+    }
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 7); // End of current week
+    // Filter work orders with valid addresses
+    const validWorkOrders = workOrders.filter(wo => wo.address?.trim());
 
-    return workOrders.filter(wo => {
-      const nextDue = new Date(wo.schedule.nextDue);
-      return nextDue >= startOfWeek && nextDue < endOfWeek && wo.address?.trim();
-    });
+    if (validWorkOrders.length === 0) {
+      throw new Error('No work orders with valid addresses found');
+    }
+
+    // Check 23-waypoint limit (Google Directions API limitation)
+    let workOrdersToOptimize = validWorkOrders;
+    let hasLimitWarning = false;
+
+    if (validWorkOrders.length > 23) {
+      workOrdersToOptimize = validWorkOrders.slice(0, 23);
+      hasLimitWarning = true;
+
+      // Show warning alert
+      const optimizedList = workOrdersToOptimize.map((wo, i) => `${i + 1}. ${wo.name}`).join('\n');
+      const warningMessage = `⚠️ Routing Limitation\n\nOur routing service supports a maximum of 23 waypoints per route.\n\nOnly the first 23 work orders will be optimized:\n${optimizedList}\n\nRemaining ${validWorkOrders.length - 23} work orders will appear after the optimized route.`;
+      alert(warningMessage);
+    }
+
+    try {
+      // Extract addresses for the API call
+      const destinations = workOrdersToOptimize.map(wo => wo.address);
+
+      // Call the route optimization API
+      const routeData = await this.optimizeRoute(origin, destinations);
+
+      // Reorder work orders based on the optimized route
+      const optimizedOrder = this.reorderFilteredWorkOrders(
+        workOrdersToOptimize,
+        routeData.routes[0]?.waypoint_order || []
+      );
+
+      // If there were work orders beyond the 23 limit, append them at the end
+      if (hasLimitWarning) {
+        const remainingWorkOrders = validWorkOrders.slice(23);
+        optimizedOrder.push(...remainingWorkOrders);
+      }
+
+      // Add any work orders that didn't have valid addresses at the end
+      const invalidAddressWorkOrders = workOrders.filter(wo => !wo.address?.trim());
+      optimizedOrder.push(...invalidAddressWorkOrders);
+
+      return optimizedOrder;
+
+    } catch (error) {
+      console.error('Route optimization failed:', error);
+      throw new Error(`Route optimization failed: ${error.message}`);
+    }
   }
 
   /**
-   * Reorder work orders based on optimized route
+   * Reorder work orders based on optimized route for filtered list
+   * @param {Array} workOrders - Work orders to reorder
+   * @param {Array} optimizedOrder - Optimized order indices from Google API
+   * @returns {Array} - Reordered work orders
+   */
+  reorderFilteredWorkOrders(workOrders, optimizedOrder) {
+    if (!optimizedOrder || optimizedOrder.length === 0) {
+      return workOrders;
+    }
+
+    const reordered = [];
+
+    // Add optimized orders first, in the order specified by Google API
+    optimizedOrder.forEach(index => {
+      if (index < workOrders.length) {
+        reordered.push(workOrders[index]);
+      }
+    });
+
+    // Add any work orders that weren't included in the optimization
+    workOrders.forEach((wo, index) => {
+      if (!optimizedOrder.includes(index)) {
+        reordered.push(wo);
+      }
+    });
+
+    return reordered;
+  }
+
+  /**
+   * Reorder work orders based on optimized route (legacy method)
    * @param {Array} workOrders - Original work orders
    * @param {Array} optimizedOrder - Optimized order indices from Google API
    * @returns {Array} - Reordered work orders
@@ -165,8 +238,39 @@ class DirectionsService {
 
     return reordered;
   }
+
+  /**
+   * Get work orders scheduled for this week that have valid addresses (legacy method)
+   * @param {Array} workOrders - All work orders
+   * @returns {Array} - Work orders scheduled this week with addresses
+   */
+  getWorkOrdersForThisWeek(workOrders) {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay()); // Start of current week (Sunday)
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 7); // End of current week
+
+    return workOrders.filter(wo => {
+      // Since we no longer have nextDue, check if the work order has recent activity or needs scheduling
+      if (!wo.address?.trim()) return false;
+
+      // Include work orders that have no recent completed activity (need service)
+      const hasRecentCompletedActivity = wo.activity?.some(activity => {
+        const activityDate = new Date(activity.date);
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return activityDate > weekAgo && activity.status === 'completed';
+      });
+
+      return !hasRecentCompletedActivity;
+    });
+  }
 }
 
-// Export singleton instance
+// Export singleton instance and specific functions
 export const directionsService = new DirectionsService();
+export const optimizeRoute = (origin, workOrders) => directionsService.optimizeWorkOrderRoute(origin, workOrders);
 export default DirectionsService;

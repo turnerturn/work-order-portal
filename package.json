@@ -32,6 +32,8 @@
     "start": "BROWSER=none WDS_SOCKET_PORT=0 vite --port 3000",
     "build": "vite build && npm run inject-version",
     "inject-version": "node scripts/inject-version.js",
+    "generate-data": "node scripts/generate-mock-data.js",
+    "analyze-data": "node scripts/analyze-data.js",
     "preview": "vite preview",
     "test": "vitest"
   },

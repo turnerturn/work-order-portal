@@ -104,14 +104,8 @@ This section has moved here: [https://vitejs.dev/guide/troubleshooting.html](htt
 
 ### Original Requirements (For Reference):
 
-- After i click schedule and pick a date, i want to return back to the portal of work order cards.  I dont want to render the details modal.
+- When i filter items which dont have any results, my page goes blank.  i need to fix this error by properly handling output when no filters match.
 
-- Cadence should only be my frequence selection. Remove status, day of week, and next due date inputs from this details section.
+- Before optimizing route, I want confirmation modal with the following instruction:  Our routing feature can only optimize a max of 23 waypoints for a single route.  If your filtered list has more than 23 filtered items then only the top 23 items sorted in your filtered list will be optimized for routing.
 
-- Next Due Date will actually be changed to be a sub-text of the cadence selection which determines suggestion for next scheduled activity.  i.e.. get cadence selection and most recent activity date before now().  subtext will indicate the next sugggested activity date to be scheduled.
-
-- The details modal should only have 1 row per label/input.  The label should be empbeded at the top of the input.  To conserve mobile ffriendly realestate on the web page.
-
-- Activities should stretch the width of its parent modal.  With adequate padding.  The activities modal should allow me to edit the status.  When row is clicked, we will have modal allowing us to update date,  description , status.  And will have a list group of text items i can add or delete (trash icon).  I will use this as a list of reminders associated with that work activity.
-
-- Add a feature for a feedback button which posts the feedback to a mocked API endpoint.  This will eventually be converted into more vibe coding tasks..
+- Direction service should be revised to get top 23 work orders ordered by suggested nextActivityDate.  Consider optimizing when dealing with more than 23 records...  Consider batching by groups of zipcode and etc...
