@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isWorkOrderOverdue } from '../utils/dateUtils';
+import { formatDate, getNextSuggestedActivityDate, isWorkOrderNew, isWorkOrderOverdueNew, isWorkOrderUpcoming } from '../utils/dateUtils';
 import ScheduleModal from './ScheduleModal';
 
 const WorkOrderCard = ({ workOrder, onViewDetails, onSchedule, compact = false }) => {
@@ -40,35 +40,23 @@ const WorkOrderCard = ({ workOrder, onViewDetails, onSchedule, compact = false }
 
   // Helper function to determine work order status
   const getWorkOrderStatus = (workOrder) => {
-    // Check if it's a new work order (created within last 7 days)
-    const createdDate = new Date(workOrder['created-date']);
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    if (createdDate >= sevenDaysAgo) {
+    // Check if it's a new work order (no activities)
+    if (isWorkOrderNew(workOrder)) {
       return { type: 'new', label: 'New', color: 'info', icon: NewIcon };
     }
 
-    // Check if it's overdue using the utility function
-    if (isWorkOrderOverdue(workOrder)) {
+    // Check if it's overdue using the new utility function
+    if (isWorkOrderOverdueNew(workOrder)) {
       return { type: 'overdue', label: 'Overdue', color: 'error', icon: WarningIcon };
     }
 
-    // Check if it has upcoming activity this week
-    if (workOrder.activity?.some(activity => {
-      const activityDate = new Date(activity.date);
-      const now = new Date();
-      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
-      startOfWeek.setHours(0, 0, 0, 0);
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(endOfWeek.getDate() + 6);
-      endOfWeek.setHours(23, 59, 59, 999);
-      return activityDate >= startOfWeek && activityDate <= endOfWeek && activity.status !== 'completed';
-    })) {
-      return { type: 'thisWeek', label: 'This Week', color: 'warning', icon: ScheduleIcon };
+    // Check if it's upcoming (within next 2 weeks)
+    if (isWorkOrderUpcoming(workOrder)) {
+      return { type: 'upcoming', label: 'Upcoming', color: 'warning', icon: ScheduleIcon };
     }
 
-    // Default to upcoming
-    return { type: 'upcoming', label: 'Upcoming', color: 'success', icon: ScheduleIcon };
+    // Default to scheduled
+    return { type: 'scheduled', label: 'Scheduled', color: 'success', icon: ScheduleIcon };
   };
 
   // Helper function to get active restrictions
@@ -142,8 +130,16 @@ const WorkOrderCard = ({ workOrder, onViewDetails, onSchedule, compact = false }
             <Typography variant="h6" component="h3" fontWeight="bold" gutterBottom>
               {workOrder.name}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
               {workOrder.description}
+            </Typography>
+            {/* Next Suggested Activity */}
+            <Typography variant="caption" color="text.secondary" sx={{ 
+              fontStyle: 'italic',
+              display: 'block',
+              mb: 1
+            }}>
+              Next suggested: {formatDate(getNextSuggestedActivityDate(workOrder).toISOString())}
             </Typography>
           </Box>
         </Box>

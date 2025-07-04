@@ -272,3 +272,108 @@ export const isUpcomingInTwoWeeks = (workOrder) => {
     return false;
   }
 };
+
+// Calculate next suggested activity date based on last completed activity and frequency
+export const getNextSuggestedActivityDate = (workOrder) => {
+  try {
+    let referenceDate;
+
+    if (workOrder.activity && workOrder.activity.length > 0) {
+      // Find the most recent completed activity
+      const completedActivities = workOrder.activity
+        .filter(activity => activity.status === 'completed')
+        .map(activity => ({
+          ...activity,
+          date: parseISO(activity.date)
+        }))
+        .sort((a, b) => b.date - a.date);
+
+      if (completedActivities.length > 0) {
+        referenceDate = completedActivities[0].date;
+      } else {
+        // No completed activities, use created date
+        referenceDate = parseISO(workOrder['created-date']);
+      }
+    } else {
+      // No activities at all, use created date
+      referenceDate = parseISO(workOrder['created-date']);
+    }
+
+    // Calculate next suggested date based on frequency
+    const nextDate = new Date(referenceDate);
+    switch (workOrder.schedule?.frequency) {
+      case 'daily':
+        nextDate.setDate(nextDate.getDate() + 1);
+        break;
+      case 'weekly':
+        nextDate.setDate(nextDate.getDate() + 7);
+        break;
+      case 'bi-weekly':
+        nextDate.setDate(nextDate.getDate() + 14);
+        break;
+      case 'monthly':
+        nextDate.setMonth(nextDate.getMonth() + 1);
+        break;
+      case 'quarterly':
+        nextDate.setMonth(nextDate.getMonth() + 3);
+        break;
+      case 'annually':
+        nextDate.setFullYear(nextDate.getFullYear() + 1);
+        break;
+      default:
+        // Default to weekly if no frequency
+        nextDate.setDate(nextDate.getDate() + 7);
+    }
+
+    return nextDate;
+  } catch (error) {
+    console.error('Error calculating next suggested activity date:', error);
+    return new Date(); // Return current date as fallback
+  }
+};
+
+// Check if a work order is overdue based on suggested next activity date
+export const isWorkOrderOverdueNew = (workOrder) => {
+  try {
+    const now = new Date();
+    const suggestedDate = getNextSuggestedActivityDate(workOrder);
+    
+    // Check if suggested date has passed and we still don't have completed activity since then
+    if (suggestedDate < now) {
+      // Check if there's any completed activity since the suggested date
+      const recentCompletedActivity = workOrder.activity?.some(activity => {
+        try {
+          const activityDate = parseISO(activity.date);
+          return activity.status === 'completed' && activityDate >= suggestedDate;
+        } catch {
+          return false;
+        }
+      });
+      
+      return !recentCompletedActivity;
+    }
+    
+    return false;
+  } catch {
+    return false;
+  }
+};
+
+// Check if a work order is upcoming (within next 2 weeks)
+export const isWorkOrderUpcoming = (workOrder) => {
+  try {
+    const now = new Date();
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+    
+    const suggestedDate = getNextSuggestedActivityDate(workOrder);
+    return suggestedDate >= now && suggestedDate <= twoWeeksFromNow;
+  } catch {
+    return false;
+  }
+};
+
+// Check if a work order is new (no activities)
+export const isWorkOrderNew = (workOrder) => {
+  return !workOrder.activity || workOrder.activity.length === 0;
+};

@@ -26,7 +26,6 @@ const SearchAndFilter = ({
   onFilterChange,
   newCount,
   upcomingCount,
-  thisWeekCount,
   overdueCount,
   // Route optimization props
   routeOptimized,
@@ -60,8 +59,7 @@ const SearchAndFilter = ({
     if (activeFilter) {
       const filterLabels = {
         new: 'New',
-        upcoming: 'This Month',
-        thisWeek: 'This Week',
+        upcoming: 'Upcoming',
         overdue: 'Overdue'
       };
       badges.push({
@@ -233,22 +231,6 @@ const SearchAndFilter = ({
               </Button>
 
               <Button
-                variant={activeFilter === 'thisWeek' ? 'contained' : 'outlined'}
-                size="small"
-                onClick={() => onFilterChange(activeFilter === 'thisWeek' ? null : 'thisWeek')}
-                color="warning"
-                sx={{
-                  textTransform: 'none',
-                  borderRadius: 2,
-                  height: '36px',
-                  minWidth: 'auto',
-                  px: 1.5
-                }}
-              >
-                This Week {thisWeekCount > 0 && `(${thisWeekCount})`}
-              </Button>
-
-              <Button
                 variant={activeFilter === 'overdue' ? 'contained' : 'outlined'}
                 size="small"
                 onClick={() => onFilterChange(activeFilter === 'overdue' ? null : 'overdue')}
@@ -375,7 +357,6 @@ SearchAndFilter.propTypes = {
   onFilterChange: PropTypes.func.isRequired,
   newCount: PropTypes.number.isRequired,
   upcomingCount: PropTypes.number.isRequired,
-  thisWeekCount: PropTypes.number.isRequired,
   overdueCount: PropTypes.number.isRequired,
   // Route optimization props
   routeOptimized: PropTypes.bool,

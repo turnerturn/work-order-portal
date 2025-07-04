@@ -14,7 +14,7 @@ import {
 import React, { useState } from 'react';
 import { useWorkOrders } from '../hooks/useWorkOrders';
 import { optimizeRoute } from '../services/directionsService';
-import { formatDate, isNewWorkOrder, isThisWeek, isUpcomingInTwoWeeks, isWorkOrderOverdue } from '../utils/dateUtils';
+import { formatDate, isWorkOrderNew, isWorkOrderOverdueNew, isWorkOrderUpcoming } from '../utils/dateUtils';
 import NavBar from './NavBar';
 import ScheduleNotification from './ScheduleNotification';
 import SearchAndFilter from './SearchAndFilter';
@@ -60,19 +60,13 @@ const WorkOrderPortal = () => {
         let passesQuickFilter = false;
         switch (activeFilter) {
           case 'new':
-            passesQuickFilter = isNewWorkOrder(wo['created-date']);
+            passesQuickFilter = isWorkOrderNew(wo);
             break;
           case 'upcoming':
-            passesQuickFilter = isUpcomingInTwoWeeks(wo);
-            break;
-          case 'thisWeek':
-            // For this week, check work orders with activity this week or need attention
-            passesQuickFilter = wo.activity?.some(activity =>
-              isThisWeek(activity.date) && activity.status !== 'completed'
-            );
+            passesQuickFilter = isWorkOrderUpcoming(wo);
             break;
           case 'overdue':
-            passesQuickFilter = isWorkOrderOverdue(wo);
+            passesQuickFilter = isWorkOrderOverdueNew(wo);
             break;
           default:
             passesQuickFilter = true;
@@ -95,14 +89,9 @@ const WorkOrderPortal = () => {
   const safeFilteredWorkOrders = filteredAndSortedWorkOrders || [];
 
   // Calculate dashboard stats
-  const newCount = workOrders.filter(wo => isNewWorkOrder(wo['created-date'])).length;
-  const overdueCount = workOrders.filter(wo => isWorkOrderOverdue(wo)).length;
-  const upcomingCount = workOrders.filter(wo => isUpcomingInTwoWeeks(wo)).length;
-  const thisWeekCount = workOrders.filter(wo =>
-    wo.activity?.some(activity =>
-      isThisWeek(activity.date) && activity.status !== 'completed'
-    )
-  ).length;
+  const newCount = workOrders.filter(wo => isWorkOrderNew(wo)).length;
+  const overdueCount = workOrders.filter(wo => isWorkOrderOverdueNew(wo)).length;
+  const upcomingCount = workOrders.filter(wo => isWorkOrderUpcoming(wo)).length;
 
   const handleAddNewOrder = () => {
     console.log('Add new work order');
@@ -221,7 +210,6 @@ const WorkOrderPortal = () => {
           onFilterChange={handleFilterChange}
           newCount={newCount}
           upcomingCount={upcomingCount}
-          thisWeekCount={thisWeekCount}
           overdueCount={overdueCount}
           routeOptimized={routeOptimized}
           onOptimizeRoute={handleOptimizeRoute}

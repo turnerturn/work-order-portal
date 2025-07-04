@@ -109,3 +109,5 @@ This section has moved here: [https://vitejs.dev/guide/troubleshooting.html](htt
 - Before optimizing route, I want confirmation modal with the following instruction:  Our routing feature can only optimize a max of 23 waypoints for a single route.  If your filtered list has more than 23 filtered items then only the top 23 items sorted in your filtered list will be optimized for routing.
 
 - Direction service should be revised to get top 23 work orders ordered by suggested nextActivityDate.  Consider optimizing when dealing with more than 23 records...  Consider batching by groups of zipcode and etc...
+
+- Add date range filter for next suggested activity date.
